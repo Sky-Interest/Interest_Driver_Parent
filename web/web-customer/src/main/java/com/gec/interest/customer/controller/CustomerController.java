@@ -1,7 +1,9 @@
 package com.gec.interest.customer.controller;
 
 import com.gec.interest.common.constant.RedisConstant;
+import com.gec.interest.common.login.InterestLogin;
 import com.gec.interest.common.result.Result;
+import com.gec.interest.common.util.AuthContextHolder;
 import com.gec.interest.customer.service.CustomerService;
 import com.gec.interest.model.vo.customer.CustomerLoginVo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,10 +39,17 @@ public class CustomerController {
     private RedisTemplate redisTemplate;
 
     @Operation(summary = "获取客户登录信息")
+    @InterestLogin
     @GetMapping("/getCustomerLoginInfo")
-    public Result<CustomerLoginVo> getCustomerLoginInfo(@RequestHeader(value="token") String token) {
-        String customerId = (String)redisTemplate.opsForValue().get(RedisConstant.USER_LOGIN_KEY_PREFIX+token);
-        return Result.ok(customerInfoService.getCustomerLoginInfo(Long.parseLong(customerId)));
+    public Result<CustomerLoginVo> getCustomerLoginInfo() {
+
+        //1 从ThreadLocal获取用户id
+        Long customerId = AuthContextHolder.getUserId();
+
+        //调用service
+        CustomerLoginVo customerLoginVo = customerInfoService.getCustomerLoginInfo(customerId);
+
+        return Result.ok(customerLoginVo);
     }
 }
 
