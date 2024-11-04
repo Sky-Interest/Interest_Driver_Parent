@@ -1,7 +1,10 @@
 package com.gec.interest.driver.controller;
 
+import com.gec.interest.common.login.InterestLogin;
 import com.gec.interest.common.result.Result;
+import com.gec.interest.common.util.AuthContextHolder;
 import com.gec.interest.driver.service.DriverService;
+import com.gec.interest.model.vo.driver.DriverLoginVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +27,13 @@ public class DriverController {
     @GetMapping("/login/{code}")
     public Result<String> login(@PathVariable String code) {
         return Result.ok(driverService.login(code));
+    }
+    @Operation(summary = "获取司机登录信息")
+    @InterestLogin
+    @GetMapping("/getDriverLoginInfo")
+    public Result<DriverLoginVo> getDriverLoginInfo() {
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(driverService.getDriverLoginInfo(driverId));
     }
 
 }

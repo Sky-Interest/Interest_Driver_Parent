@@ -4,6 +4,7 @@ import com.gec.interest.common.constant.RedisConstant;
 import com.gec.interest.common.result.Result;
 import com.gec.interest.driver.client.DriverInfoFeignClient;
 import com.gec.interest.driver.service.DriverService;
+import com.gec.interest.model.vo.driver.DriverLoginVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -38,6 +39,10 @@ public class DriverServiceImpl implements DriverService {
                 RedisConstant.USER_LOGIN_KEY_TIMEOUT,
                 TimeUnit.SECONDS);
         return token;
+    }
+    @Override
+    public DriverLoginVo getDriverLoginInfo(Long driverId) {
+        return driverInfoFeignClient.getDriverLoginInfo(driverId).getData();
     }
 
 }
