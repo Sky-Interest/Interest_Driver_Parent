@@ -4,6 +4,7 @@ import com.gec.interest.common.constant.RedisConstant;
 import com.gec.interest.common.result.Result;
 import com.gec.interest.driver.client.DriverInfoFeignClient;
 import com.gec.interest.driver.service.DriverService;
+import com.gec.interest.model.form.driver.UpdateDriverAuthInfoForm;
 import com.gec.interest.model.vo.driver.DriverAuthInfoVo;
 import com.gec.interest.model.vo.driver.DriverLoginVo;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +49,10 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public DriverAuthInfoVo getDriverAuthInfo(Long driverId) {
         return driverInfoFeignClient.getDriverAuthInfo(driverId).getData();
+    }
+    @Override
+    public Boolean updateDriverAuthInfo(UpdateDriverAuthInfoForm updateDriverAuthInfoForm) {
+        return driverInfoFeignClient.UpdateDriverAuthInfo(updateDriverAuthInfoForm).getData();
     }
 
 }

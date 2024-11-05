@@ -17,12 +17,14 @@ import com.gec.interest.model.entity.driver.DriverInfo;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gec.interest.model.entity.driver.DriverLoginLog;
 import com.gec.interest.model.entity.driver.DriverSet;
+import com.gec.interest.model.form.driver.UpdateDriverAuthInfoForm;
 import com.gec.interest.model.vo.driver.DriverAuthInfoVo;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 
@@ -108,6 +110,16 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
         driverAuthInfoVo.setDriverLicenseBackShowUrl(cosService.getImageUrl(driverAuthInfoVo.getDriverLicenseBackUrl()));
         driverAuthInfoVo.setDriverLicenseHandShowUrl(cosService.getImageUrl(driverAuthInfoVo.getDriverLicenseHandUrl()));
         return driverAuthInfoVo;
+    }
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Boolean updateDriverAuthInfo(UpdateDriverAuthInfoForm updateDriverAuthInfoForm) {
+        DriverInfo driverInfo = new DriverInfo();
+        driverInfo.setId(updateDriverAuthInfoForm.getDriverId());
+        BeanUtils.copyProperties(updateDriverAuthInfoForm, driverInfo);
+        //修改司机的验证状态
+        driverInfo.setAuthStatus(2);
+        return this.updateById(driverInfo);
     }
 
 
