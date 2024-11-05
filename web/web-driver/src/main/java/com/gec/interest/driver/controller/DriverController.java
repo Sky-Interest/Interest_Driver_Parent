@@ -4,6 +4,7 @@ import com.gec.interest.common.login.InterestLogin;
 import com.gec.interest.common.result.Result;
 import com.gec.interest.common.util.AuthContextHolder;
 import com.gec.interest.driver.service.DriverService;
+import com.gec.interest.model.vo.driver.DriverAuthInfoVo;
 import com.gec.interest.model.vo.driver.DriverLoginVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,6 +35,13 @@ public class DriverController {
     public Result<DriverLoginVo> getDriverLoginInfo() {
         Long driverId = AuthContextHolder.getUserId();
         return Result.ok(driverService.getDriverLoginInfo(driverId));
+    }
+    @Operation(summary = "获取司机认证信息")
+    @InterestLogin
+    @GetMapping("/getDriverAuthInfo")
+    public Result<DriverAuthInfoVo> getDriverAuthInfo() {
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(driverService.getDriverAuthInfo(driverId));
     }
 
 }
