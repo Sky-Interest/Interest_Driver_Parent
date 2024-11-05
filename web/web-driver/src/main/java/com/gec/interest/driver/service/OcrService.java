@@ -1,5 +1,8 @@
 package com.gec.interest.driver.service;
 
-public interface OcrService {
+import com.gec.interest.model.vo.driver.IdCardOcrVo;
+import org.springframework.web.multipart.MultipartFile;
 
+public interface OcrService {
+    IdCardOcrVo idCardOcr(MultipartFile file);
 }
