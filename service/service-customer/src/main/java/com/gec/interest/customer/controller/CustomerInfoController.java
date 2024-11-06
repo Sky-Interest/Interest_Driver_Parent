@@ -36,5 +36,6 @@ public class CustomerInfoController {
 	public Result<CustomerLoginVo> getCustomerLoginInfo(@PathVariable Long customerId) {
 		return Result.ok(customerInfoService.getCustomerLoginInfo(customerId));
 	}
+	
 }
 
