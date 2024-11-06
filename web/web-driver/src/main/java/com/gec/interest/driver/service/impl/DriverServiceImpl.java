@@ -4,6 +4,7 @@ import com.gec.interest.common.constant.RedisConstant;
 import com.gec.interest.common.result.Result;
 import com.gec.interest.driver.client.DriverInfoFeignClient;
 import com.gec.interest.driver.service.DriverService;
+import com.gec.interest.model.form.driver.DriverFaceModelForm;
 import com.gec.interest.model.form.driver.UpdateDriverAuthInfoForm;
 import com.gec.interest.model.vo.driver.DriverAuthInfoVo;
 import com.gec.interest.model.vo.driver.DriverLoginVo;
@@ -53,6 +54,10 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public Boolean updateDriverAuthInfo(UpdateDriverAuthInfoForm updateDriverAuthInfoForm) {
         return driverInfoFeignClient.UpdateDriverAuthInfo(updateDriverAuthInfoForm).getData();
+    }
+    @Override
+    public Boolean creatDriverFaceModel(DriverFaceModelForm driverFaceModelForm) {
+        return driverInfoFeignClient.creatDriverFaceModel(driverFaceModelForm).getData();
     }
 
 }

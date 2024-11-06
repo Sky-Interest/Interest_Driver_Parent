@@ -4,6 +4,7 @@ import com.gec.interest.common.login.InterestLogin;
 import com.gec.interest.common.result.Result;
 import com.gec.interest.common.util.AuthContextHolder;
 import com.gec.interest.driver.service.DriverService;
+import com.gec.interest.model.form.driver.DriverFaceModelForm;
 import com.gec.interest.model.form.driver.UpdateDriverAuthInfoForm;
 import com.gec.interest.model.vo.driver.DriverAuthInfoVo;
 import com.gec.interest.model.vo.driver.DriverLoginVo;
@@ -47,6 +48,13 @@ public class DriverController {
     public Result<Boolean> updateDriverAuthInfo(@RequestBody UpdateDriverAuthInfoForm updateDriverAuthInfoForm) {
         updateDriverAuthInfoForm.setDriverId(AuthContextHolder.getUserId());
         return Result.ok(driverService.updateDriverAuthInfo(updateDriverAuthInfoForm));
+    }
+    @Operation(summary = "创建司机人脸模型")
+    @InterestLogin
+    @PostMapping("/creatDriverFaceModel")
+    public Result<Boolean> creatDriverFaceModel(@RequestBody DriverFaceModelForm driverFaceModelForm) {
+        driverFaceModelForm.setDriverId(AuthContextHolder.getUserId());
+        return Result.ok(driverService.creatDriverFaceModel(driverFaceModelForm));
     }
 
 }
