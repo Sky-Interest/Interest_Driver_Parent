@@ -1,5 +1,6 @@
 package com.gec.interest.order.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.gec.interest.common.constant.RedisConstant;
 import com.gec.interest.model.entity.order.OrderInfo;
 import com.gec.interest.model.entity.order.OrderStatusLog;
@@ -55,6 +56,22 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         orderStatusLog.setOrderStatus(status);
         orderStatusLog.setOperateTime(new Date());
         orderStatusLogMapper.insert(orderStatusLog);
+    }
+    //根据订单id获取订单状态
+    @Override
+    public Integer getOrderStatus(Long orderId) {
+        //sql语句： select status from order_info where id=?
+        LambdaQueryWrapper<OrderInfo> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(OrderInfo::getId,orderId);
+        wrapper.select(OrderInfo::getStatus);
+        //调用mapper方法
+        OrderInfo orderInfo = orderInfoMapper.selectOne(wrapper);
+        //订单不存在
+        if(orderInfo == null) {
+            return OrderStatus.NULL_ORDER.getStatus();
+        }
+
+        return orderInfo.getStatus();
     }
 
 }

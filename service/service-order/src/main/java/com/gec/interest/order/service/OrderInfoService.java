@@ -6,4 +6,5 @@ import com.gec.interest.model.form.order.OrderInfoForm;
 
 public interface OrderInfoService extends IService<OrderInfo> {
     Long saveOrderInfo(OrderInfoForm orderInfoForm);
+    Integer getOrderStatus(Long orderId);
 }
