@@ -7,4 +7,5 @@ import com.gec.interest.model.vo.customer.ExpectOrderVo;
 public interface OrderService {
     ExpectOrderVo expectOrder(ExpectOrderForm expectOrderForm);
     Long submitOrder(SubmitOrderForm submitOrderForm);
+    Integer getOrderStatus(Long orderId);
 }

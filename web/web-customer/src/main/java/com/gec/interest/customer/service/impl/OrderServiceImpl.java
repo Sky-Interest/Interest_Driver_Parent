@@ -32,6 +32,7 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderInfoFeignClient orderInfoFeignClient;
 
+
     @Override
     public ExpectOrderVo expectOrder(ExpectOrderForm expectOrderForm) {
         //计算驾驶线路
@@ -80,5 +81,9 @@ public class OrderServiceImpl implements OrderService {
         //TODO启动任务调度
 
         return orderId;
+    }
+    @Override
+    public Integer getOrderStatus(Long orderId) {
+        return orderInfoFeignClient.getOrderStatus(orderId).getData();
     }
 }
