@@ -39,7 +39,7 @@ public class CustomerController {
     private RedisTemplate redisTemplate;
 
     @Operation(summary = "获取客户登录信息")
-    @InterestLogin
+//    @InterestLogin
     @GetMapping("/getCustomerLoginInfo")
     public Result<CustomerLoginVo> getCustomerLoginInfo() {
 
