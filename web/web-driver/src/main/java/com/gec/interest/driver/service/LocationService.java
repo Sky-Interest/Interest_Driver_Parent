@@ -1,6 +1,8 @@
 package com.gec.interest.driver.service;
 
-public interface LocationService {
+import com.gec.interest.model.form.map.UpdateDriverLocationForm;
 
+public interface LocationService {
+    Boolean updateDriverLocation(UpdateDriverLocationForm updateDriverLocationForm);
 
 }
