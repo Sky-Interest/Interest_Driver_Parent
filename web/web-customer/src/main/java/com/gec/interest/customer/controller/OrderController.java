@@ -2,8 +2,10 @@ package com.gec.interest.customer.controller;
 
 import com.gec.interest.common.login.InterestLogin;
 import com.gec.interest.common.result.Result;
+import com.gec.interest.common.util.AuthContextHolder;
 import com.gec.interest.customer.service.OrderService;
 import com.gec.interest.model.form.customer.ExpectOrderForm;
+import com.gec.interest.model.form.customer.SubmitOrderForm;
 import com.gec.interest.model.vo.customer.ExpectOrderVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,6 +37,13 @@ public class OrderController {
     @PostMapping("/expectOrder")
     public Result<ExpectOrderVo> expectOrder(@RequestBody ExpectOrderForm expectOrderForm) {
         return Result.ok(orderService.expectOrder(expectOrderForm));
+    }
+    @Operation(summary = "乘客下单")
+    @InterestLogin
+    @PostMapping("/submitOrder")
+    public Result<Long> submitOrder(@RequestBody SubmitOrderForm submitOrderForm) {
+        submitOrderForm.setCustomerId(AuthContextHolder.getUserId());
+        return Result.ok(orderService.submitOrder(submitOrderForm));
     }
 }
 
