@@ -61,6 +61,7 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
     @Autowired
     private TencentCloudProperties tencentCloudProperties;
 
+
     //小程序授权登录
     @Override
     public Long login(String code) {
@@ -193,6 +194,12 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
         Boolean isArchiveFace = StringUtils.hasText(driverInfo.getFaceModelId());
         driverLoginVo.setIsArchiveFace(isArchiveFace);
         return driverLoginVo;
+    }
+    @Override
+    public DriverSet getDriverSet(Long driverId) {
+        LambdaQueryWrapper<DriverSet> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(DriverSet::getDriverId, driverId);
+        return driverSetMapper.selectOne(queryWrapper);
     }
 
 

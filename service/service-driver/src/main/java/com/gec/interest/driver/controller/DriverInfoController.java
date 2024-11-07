@@ -2,6 +2,7 @@ package com.gec.interest.driver.controller;
 
 import com.gec.interest.common.result.Result;
 import com.gec.interest.driver.service.DriverInfoService;
+import com.gec.interest.model.entity.driver.DriverSet;
 import com.gec.interest.model.form.driver.DriverFaceModelForm;
 import com.gec.interest.model.form.driver.UpdateDriverAuthInfoForm;
 import com.gec.interest.model.vo.driver.DriverAuthInfoVo;
@@ -45,6 +46,11 @@ public class DriverInfoController {
     @PostMapping("/creatDriverFaceModel")
     public Result<Boolean> creatDriverFaceModel(@RequestBody DriverFaceModelForm driverFaceModelForm) {
         return Result.ok(driverInfoService.creatDriverFaceModel(driverFaceModelForm));
+    }
+    @Operation(summary = "获取司机设置信息")
+    @GetMapping("/getDriverSet/{driverId}")
+    public Result<DriverSet> getDriverSet(@PathVariable Long driverId) {
+        return Result.ok(driverInfoService.getDriverSet(driverId));
     }
 
 

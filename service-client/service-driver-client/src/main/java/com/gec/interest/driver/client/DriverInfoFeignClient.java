@@ -1,6 +1,7 @@
 package com.gec.interest.driver.client;
 
 import com.gec.interest.common.result.Result;
+import com.gec.interest.model.entity.driver.DriverSet;
 import com.gec.interest.model.form.driver.DriverFaceModelForm;
 import com.gec.interest.model.form.driver.UpdateDriverAuthInfoForm;
 import com.gec.interest.model.vo.driver.DriverAuthInfoVo;
@@ -48,5 +49,12 @@ public interface DriverInfoFeignClient {
      */
     @PostMapping("/driver/info/creatDriverFaceModel")
     Result<Boolean> creatDriverFaceModel(@RequestBody DriverFaceModelForm driverFaceModelForm);
+    /**
+     * 获取司机设置信息
+     * @param driverId
+     * @return
+     */
+    @GetMapping("/driver/info/getDriverSet/{driverId}")
+    Result<DriverSet> getDriverSet(@PathVariable("driverId") Long driverId);
 
 }

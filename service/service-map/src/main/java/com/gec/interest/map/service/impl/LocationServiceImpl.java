@@ -20,6 +20,7 @@ public class LocationServiceImpl implements LocationService {
     @Autowired
     private RedisTemplate redisTemplate;
 
+
     @Override
     public Boolean updateDriverLocation(UpdateDriverLocationForm updateDriverLocationForm) {
         /**

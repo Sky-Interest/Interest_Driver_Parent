@@ -2,6 +2,7 @@ package com.gec.interest.driver.service;
 
 import com.gec.interest.model.entity.driver.DriverInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.gec.interest.model.entity.driver.DriverSet;
 import com.gec.interest.model.form.driver.DriverFaceModelForm;
 import com.gec.interest.model.form.driver.UpdateDriverAuthInfoForm;
 import com.gec.interest.model.vo.driver.DriverAuthInfoVo;
@@ -14,4 +15,5 @@ public interface DriverInfoService extends IService<DriverInfo> {
     DriverAuthInfoVo getDriverAuthInfo(Long driverId);
     Boolean updateDriverAuthInfo(UpdateDriverAuthInfoForm updateDriverAuthInfoForm);
     Boolean creatDriverFaceModel(DriverFaceModelForm driverFaceModelForm);
+    DriverSet getDriverSet(Long driverId);
 }
