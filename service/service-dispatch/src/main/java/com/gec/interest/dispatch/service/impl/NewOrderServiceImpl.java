@@ -21,6 +21,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -115,6 +116,28 @@ public class NewOrderServiceImpl implements NewOrderService {
                 log.info("该新订单信息已放入司机临时队列: {}", JSON.toJSONString(newOrderDataVo));
             }
         });
+        return true;
+    }
+    @Override
+    public List<NewOrderDataVo> findNewOrderQueueData(Long driverId) {
+        List<NewOrderDataVo> list = new ArrayList<>();
+        String key = RedisConstant.DRIVER_ORDER_TEMP_LIST + driverId;
+        long size = redisTemplate.opsForList().size(key);
+        if(size > 0) {
+            for(int i=0; i<size; i++) {
+                String content = (String)redisTemplate.opsForList().leftPop(key);
+                NewOrderDataVo newOrderDataVo = JSONObject.parseObject(content, NewOrderDataVo.class);
+                list.add(newOrderDataVo);
+            }
+        }
+        return list;
+    }
+
+    @Override
+    public Boolean clearNewOrderQueueData(Long driverId) {
+        String key = RedisConstant.DRIVER_ORDER_TEMP_LIST + driverId;
+        //直接删除，司机开启服务后，有新订单会自动创建容器
+        redisTemplate.delete(key);
         return true;
     }
 }
