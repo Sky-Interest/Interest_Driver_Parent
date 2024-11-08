@@ -1,6 +1,7 @@
 package com.gec.interest.customer.service.impl;
 
 import com.gec.interest.customer.service.OrderService;
+import com.gec.interest.dispatch.client.NewOrderFeignClient;
 import com.gec.interest.map.client.MapFeignClient;
 import com.gec.interest.model.form.customer.ExpectOrderForm;
 import com.gec.interest.model.form.customer.SubmitOrderForm;
@@ -8,6 +9,7 @@ import com.gec.interest.model.form.map.CalculateDrivingLineForm;
 import com.gec.interest.model.form.order.OrderInfoForm;
 import com.gec.interest.model.form.rules.FeeRuleRequestForm;
 import com.gec.interest.model.vo.customer.ExpectOrderVo;
+import com.gec.interest.model.vo.dispatch.NewOrderTaskVo;
 import com.gec.interest.model.vo.map.DrivingLineVo;
 import com.gec.interest.model.vo.rules.FeeRuleResponseVo;
 import com.gec.interest.order.client.OrderInfoFeignClient;
@@ -31,6 +33,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderInfoFeignClient orderInfoFeignClient;
+
+    @Autowired
+    private NewOrderFeignClient newOrderFeignClient;
 
 
     @Override
@@ -78,12 +83,29 @@ public class OrderServiceImpl implements OrderService {
         //4.保存订单信息
         Long orderId = orderInfoFeignClient.saveOrderInfo(orderInfoForm).getData();
 
-        //TODO启动任务调度
-
+        //5.添加并执行任务调度，每分钟执行一次，搜索附近司机
+        //5.1.封装调度参数对象
+        NewOrderTaskVo newOrderDispatchVo = new NewOrderTaskVo();
+        newOrderDispatchVo.setOrderId(orderId);
+        newOrderDispatchVo.setStartLocation(orderInfoForm.getStartLocation());
+        newOrderDispatchVo.setStartPointLongitude(orderInfoForm.getStartPointLongitude());
+        newOrderDispatchVo.setStartPointLatitude(orderInfoForm.getStartPointLatitude());
+        newOrderDispatchVo.setEndLocation(orderInfoForm.getEndLocation());
+        newOrderDispatchVo.setEndPointLongitude(orderInfoForm.getEndPointLongitude());
+        newOrderDispatchVo.setEndPointLatitude(orderInfoForm.getEndPointLatitude());
+        newOrderDispatchVo.setExpectAmount(orderInfoForm.getExpectAmount());
+        newOrderDispatchVo.setExpectDistance(orderInfoForm.getExpectDistance());
+        newOrderDispatchVo.setExpectTime(drivingLineVo.getDuration());
+        newOrderDispatchVo.setFavourFee(orderInfoForm.getFavourFee());
+        newOrderDispatchVo.setCreateTime(new Date());
+        //5.2.添加并执行任务调度
+        Long jobId = newOrderFeignClient.addAndStartTask(newOrderDispatchVo).getData();
+        log.info("订单id为： {}，绑定任务id为：{}", orderId, jobId);
         return orderId;
     }
     @Override
     public Integer getOrderStatus(Long orderId) {
         return orderInfoFeignClient.getOrderStatus(orderId).getData();
     }
+
 }
