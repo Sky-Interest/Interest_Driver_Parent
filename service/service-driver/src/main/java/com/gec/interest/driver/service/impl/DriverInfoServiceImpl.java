@@ -7,17 +7,11 @@ import com.gec.interest.common.constant.SystemConstant;
 import com.gec.interest.common.execption.interestException;
 import com.gec.interest.common.result.ResultCodeEnum;
 import com.gec.interest.driver.config.TencentCloudProperties;
-import com.gec.interest.driver.mapper.DriverAccountMapper;
-import com.gec.interest.driver.mapper.DriverInfoMapper;
-import com.gec.interest.driver.mapper.DriverLoginLogMapper;
-import com.gec.interest.driver.mapper.DriverSetMapper;
+import com.gec.interest.driver.mapper.*;
 import com.gec.interest.driver.service.CosService;
 import com.gec.interest.driver.service.DriverInfoService;
-import com.gec.interest.model.entity.driver.DriverAccount;
-import com.gec.interest.model.entity.driver.DriverInfo;
+import com.gec.interest.model.entity.driver.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.gec.interest.model.entity.driver.DriverLoginLog;
-import com.gec.interest.model.entity.driver.DriverSet;
 import com.gec.interest.model.form.driver.DriverFaceModelForm;
 import com.gec.interest.model.form.driver.UpdateDriverAuthInfoForm;
 import com.gec.interest.model.vo.driver.DriverAuthInfoVo;
@@ -32,6 +26,7 @@ import com.tencentcloudapi.iai.v20200303.models.CreatePersonRequest;
 import com.tencentcloudapi.iai.v20200303.models.CreatePersonResponse;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
+import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -58,8 +53,11 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
 
     @Autowired
     private DriverLoginLogMapper driverLoginLogMapper;
+
     @Autowired
     private TencentCloudProperties tencentCloudProperties;
+    @Autowired
+    private DriverFaceRecognitionMapper driverFaceRecognitionMapper;
 
 
     //小程序授权登录
@@ -202,6 +200,16 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
         return driverSetMapper.selectOne(queryWrapper);
     }
 
+
+
+    @Override
+    public Boolean isFaceRecognition(Long driverId) {
+        LambdaQueryWrapper<DriverFaceRecognition> queryWrapper = new LambdaQueryWrapper();
+        queryWrapper.eq(DriverFaceRecognition::getDriverId, driverId);
+        queryWrapper.eq(DriverFaceRecognition::getFaceDate, new DateTime().toString("yyyy-MM-dd"));
+        long count = driverFaceRecognitionMapper.selectCount(queryWrapper);
+        return count != 0;
+    }
 
 
 }
