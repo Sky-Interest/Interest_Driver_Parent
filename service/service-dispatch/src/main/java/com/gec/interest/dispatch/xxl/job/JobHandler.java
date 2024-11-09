@@ -1,5 +1,6 @@
 package com.gec.interest.dispatch.xxl.job;
 
+import com.alibaba.nacos.common.utils.ExceptionUtil;
 import com.gec.interest.dispatch.mapper.XxlJobLogMapper;
 import com.gec.interest.dispatch.service.NewOrderService;
 import com.gec.interest.model.entity.dispatch.XxlJobLog;

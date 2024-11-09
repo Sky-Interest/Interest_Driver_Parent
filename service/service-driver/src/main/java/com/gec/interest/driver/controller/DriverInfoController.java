@@ -24,7 +24,7 @@ public class DriverInfoController {
 
     @Operation(summary = "小程序授权登录")
     @GetMapping("/login/{code}")
-    public Result<Long> login(@PathVariable String code) {
+    public Result<Long> login(@PathVariable("code") String code) {
         return Result.ok(driverInfoService.login(code));
     }
     @Operation(summary = "获取司机认证信息")
@@ -34,7 +34,7 @@ public class DriverInfoController {
     }
     @Operation(summary = "获取司机登录信息")
     @GetMapping("/getDriverLoginInfo/{driverId}")
-    public Result<DriverLoginVo> getDriverLoginInfo(@PathVariable Long driverId) {
+    public Result<DriverLoginVo> getDriverLoginInfo(@PathVariable("driverId") Long driverId) {
         return Result.ok(driverInfoService.getDriverLoginInfo(driverId));
     }
     @Operation(summary = "更新司机认证信息")
