@@ -12,6 +12,8 @@ import com.gec.interest.order.mapper.OrderInfoMapper;
 import com.gec.interest.order.mapper.OrderStatusLogMapper;
 import com.gec.interest.order.service.OrderInfoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -33,6 +35,9 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private RedissonClient redissonClient;
 
     @Transactional(rollbackFor = {Exception.class})
     @Override
@@ -84,29 +89,52 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             throw new interestException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
         }
 
-        //修改订单状态及司机id
-        //update order_info set status = 2, driver_id = #{driverId}, accept_time = now() where id = #{id} and status =1
-        //条件
-        LambdaQueryWrapper<OrderInfo> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(OrderInfo::getId, orderId);
-        queryWrapper.eq(OrderInfo::getStatus, OrderStatus.WAITING_ACCEPT.getStatus());
+        // 初始化分布式锁，创建一个RLock实例
+        RLock lock = redissonClient.getLock(RedisConstant.ROB_NEW_ORDER_LOCK + orderId);
+        try {
+            /**
+             * TryLock是一种非阻塞式的分布式锁，实现原理：Redis的SETNX命令
+             * 参数：
+             *     waitTime：等待获取锁的时间
+             *     leaseTime：加锁的时间
+             */
+            boolean flag = lock.tryLock(RedisConstant.ROB_NEW_ORDER_LOCK_WAIT_TIME,RedisConstant.ROB_NEW_ORDER_LOCK_LEASE_TIME, TimeUnit.SECONDS);
+            //获取到锁
+            if (flag){
+                //二次判断，防止重复抢单
+                if(!redisTemplate.hasKey(RedisConstant.ORDER_ACCEPT_MARK)) {
+                    //抢单失败
+                    throw new interestException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
+                }
 
-        //修改字段
-        OrderInfo orderInfo = new OrderInfo();
-        orderInfo.setStatus(OrderStatus.ACCEPTED.getStatus());
-        orderInfo.setAcceptTime(new Date());
-        orderInfo.setDriverId(driverId);
-        int rows = orderInfoMapper.update(orderInfo, queryWrapper);
-        if(rows != 1) {
+                //修改订单状态
+                //update order_info set status = 2, driver_id = #{driverId} where id = #{id}
+                //修改字段
+                OrderInfo orderInfo = new OrderInfo();
+                orderInfo.setId(orderId);
+                orderInfo.setStatus(OrderStatus.ACCEPTED.getStatus());
+                orderInfo.setAcceptTime(new Date());
+                orderInfo.setDriverId(driverId);
+                int rows = orderInfoMapper.updateById(orderInfo);
+                if(rows != 1) {
+                    //抢单失败
+                    throw new interestException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
+                }
+
+                //记录日志
+                this.log(orderId, orderInfo.getStatus());
+
+                //删除redis订单标识
+                redisTemplate.delete(RedisConstant.ORDER_ACCEPT_MARK);
+            }
+        } catch (InterruptedException e) {
             //抢单失败
             throw new interestException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
+        } finally {
+            if(lock.isLocked()) {
+                lock.unlock();
+            }
         }
-
-        //记录日志
-        this.log(orderId, orderInfo.getStatus());
-
-        //删除redis订单标识
-        redisTemplate.delete(RedisConstant.ORDER_ACCEPT_MARK);
         return true;
     }
 

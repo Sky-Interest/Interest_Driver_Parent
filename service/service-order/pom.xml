@@ -19,6 +19,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.gec.interest</groupId>
+            <artifactId>service-util</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>
         </dependency>

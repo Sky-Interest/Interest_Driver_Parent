@@ -1,6 +1,5 @@
-package com.gec.interest.order.config;
+package com.gec.interest.common.config.redis;
 
-import com.alibaba.nacos.common.utils.StringUtils;
 import lombok.Data;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
@@ -9,6 +8,7 @@ import org.redisson.config.SingleServerConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
 /**
  * redisson配置信息
@@ -48,3 +48,4 @@ public class RedissonConfig {
         return Redisson.create(config);
     }
 }
+
