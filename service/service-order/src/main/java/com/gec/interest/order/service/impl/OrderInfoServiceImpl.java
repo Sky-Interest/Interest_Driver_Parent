@@ -2,6 +2,8 @@ package com.gec.interest.order.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.gec.interest.common.constant.RedisConstant;
+import com.gec.interest.common.execption.interestException;
+import com.gec.interest.common.result.ResultCodeEnum;
 import com.gec.interest.model.entity.order.OrderInfo;
 import com.gec.interest.model.entity.order.OrderStatusLog;
 import com.gec.interest.model.enums.OrderStatus;
@@ -72,6 +74,36 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         }
 
         return orderInfo.getStatus();
+    }
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Boolean robNewOrder(Long driverId, Long orderId) {
+        //抢单成功或取消订单，都会删除该key，redis判断，减少数据库压力
+        if(!redisTemplate.hasKey(RedisConstant.ORDER_ACCEPT_MARK)) {
+            //抢单失败
+            throw new interestException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
+        }
+
+        //修改订单状态及司机id
+        //update order_info set status = 2, driver_id = #{driverId}, accept_time = now() where id = #{id}
+        //修改字段
+        OrderInfo orderInfo = new OrderInfo();
+        orderInfo.setId(orderId);
+        orderInfo.setStatus(OrderStatus.ACCEPTED.getStatus());
+        orderInfo.setAcceptTime(new Date());
+        orderInfo.setDriverId(driverId);
+        int rows = orderInfoMapper.updateById(orderInfo);
+        if(rows != 1) {
+            //抢单失败
+            throw new interestException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
+        }
+
+        //记录日志
+        this.log(orderId, orderInfo.getStatus());
+
+        //删除redis订单标识
+        redisTemplate.delete(RedisConstant.ORDER_ACCEPT_MARK);
+        return true;
     }
 
 }
