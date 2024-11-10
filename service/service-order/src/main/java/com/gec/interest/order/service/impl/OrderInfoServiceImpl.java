@@ -85,14 +85,18 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         }
 
         //修改订单状态及司机id
-        //update order_info set status = 2, driver_id = #{driverId}, accept_time = now() where id = #{id}
+        //update order_info set status = 2, driver_id = #{driverId}, accept_time = now() where id = #{id} and status =1
+        //条件
+        LambdaQueryWrapper<OrderInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(OrderInfo::getId, orderId);
+        queryWrapper.eq(OrderInfo::getStatus, OrderStatus.WAITING_ACCEPT.getStatus());
+
         //修改字段
         OrderInfo orderInfo = new OrderInfo();
-        orderInfo.setId(orderId);
         orderInfo.setStatus(OrderStatus.ACCEPTED.getStatus());
         orderInfo.setAcceptTime(new Date());
         orderInfo.setDriverId(driverId);
-        int rows = orderInfoMapper.updateById(orderInfo);
+        int rows = orderInfoMapper.update(orderInfo, queryWrapper);
         if(rows != 1) {
             //抢单失败
             throw new interestException(ResultCodeEnum.COB_NEW_ORDER_FAIL);
