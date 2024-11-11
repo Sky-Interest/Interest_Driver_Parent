@@ -6,8 +6,10 @@ import com.gec.interest.common.util.AuthContextHolder;
 import com.gec.interest.customer.service.OrderService;
 import com.gec.interest.model.form.customer.ExpectOrderForm;
 import com.gec.interest.model.form.customer.SubmitOrderForm;
+import com.gec.interest.model.form.map.CalculateDrivingLineForm;
 import com.gec.interest.model.vo.customer.ExpectOrderVo;
 import com.gec.interest.model.vo.driver.DriverInfoVo;
+import com.gec.interest.model.vo.map.DrivingLineVo;
 import com.gec.interest.model.vo.map.OrderLocationVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.model.vo.order.OrderInfoVo;
@@ -80,6 +82,12 @@ public class OrderController {
     @GetMapping("/getCacheOrderLocation/{orderId}")
     public Result<OrderLocationVo> getOrderLocation(@PathVariable Long orderId) {
         return Result.ok(orderService.getCacheOrderLocation(orderId));
+    }
+    @Operation(summary = "计算最佳驾驶线路")
+    @InterestLogin
+    @PostMapping("/calculateDrivingLine")
+    public Result<DrivingLineVo> calculateDrivingLine(@RequestBody CalculateDrivingLineForm calculateDrivingLineForm) {
+        return Result.ok(orderService.calculateDrivingLine(calculateDrivingLineForm));
     }
 }
 
