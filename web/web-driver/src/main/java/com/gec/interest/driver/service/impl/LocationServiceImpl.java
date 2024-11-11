@@ -7,6 +7,7 @@ import com.gec.interest.driver.service.LocationService;
 import com.gec.interest.map.client.LocationFeignClient;
 import com.gec.interest.model.entity.driver.DriverSet;
 import com.gec.interest.model.form.map.UpdateDriverLocationForm;
+import com.gec.interest.model.form.map.UpdateOrderLocationForm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,10 @@ public class LocationServiceImpl implements LocationService {
             throw new interestException(ResultCodeEnum.NO_START_SERVICE);
         }
 
+    }
+    @Override
+    public Boolean updateOrderLocationToCache(UpdateOrderLocationForm updateOrderLocationForm) {
+        return locationFeignClient.updateOrderLocationToCache(updateOrderLocationForm).getData();
     }
 
 

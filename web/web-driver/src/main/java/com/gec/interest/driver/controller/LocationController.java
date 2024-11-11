@@ -5,6 +5,7 @@ import com.gec.interest.common.result.Result;
 import com.gec.interest.common.util.AuthContextHolder;
 import com.gec.interest.driver.service.LocationService;
 import com.gec.interest.model.form.map.UpdateDriverLocationForm;
+import com.gec.interest.model.form.map.UpdateOrderLocationForm;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,12 @@ public class LocationController {
         Long driverId = AuthContextHolder.getUserId();
         updateDriverLocationForm.setDriverId(driverId);
         return Result.ok(locationService.updateDriverLocation(updateDriverLocationForm));
+    }
+    @Operation(summary = "司机赶往代驾起始点：更新订单位置到Redis缓存")
+    @InterestLogin
+    @PostMapping("/updateOrderLocationToCache")
+    public Result updateOrderLocationToCache(@RequestBody UpdateOrderLocationForm updateOrderLocationForm) {
+        return Result.ok(locationService.updateOrderLocationToCache(updateOrderLocationForm));
     }
 
 }

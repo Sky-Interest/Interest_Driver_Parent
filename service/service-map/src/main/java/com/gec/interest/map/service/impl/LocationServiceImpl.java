@@ -8,7 +8,9 @@ import com.gec.interest.map.service.LocationService;
 import com.gec.interest.model.entity.driver.DriverSet;
 import com.gec.interest.model.form.map.SearchNearByDriverForm;
 import com.gec.interest.model.form.map.UpdateDriverLocationForm;
+import com.gec.interest.model.form.map.UpdateOrderLocationForm;
 import com.gec.interest.model.vo.map.NearByDriverVo;
+import com.gec.interest.model.vo.map.OrderLocationVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Point;
@@ -96,6 +98,14 @@ public class LocationServiceImpl implements LocationService {
             }
         }
         return list;
+    }
+    @Override
+    public Boolean updateOrderLocationToCache(UpdateOrderLocationForm updateOrderLocationForm) {
+        OrderLocationVo orderLocationVo = new OrderLocationVo();
+        orderLocationVo.setLongitude(updateOrderLocationForm.getLongitude());
+        orderLocationVo.setLatitude(updateOrderLocationForm.getLatitude());
+        redisTemplate.opsForValue().set(RedisConstant.UPDATE_ORDER_LOCATION + updateOrderLocationForm.getOrderId(), orderLocationVo);
+        return true;
     }
 
 }
