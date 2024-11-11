@@ -4,7 +4,10 @@ import com.gec.interest.common.execption.interestException;
 import com.gec.interest.common.result.ResultCodeEnum;
 import com.gec.interest.dispatch.client.NewOrderFeignClient;
 import com.gec.interest.driver.service.OrderService;
+import com.gec.interest.map.client.MapFeignClient;
 import com.gec.interest.model.entity.order.OrderInfo;
+import com.gec.interest.model.form.map.CalculateDrivingLineForm;
+import com.gec.interest.model.vo.map.DrivingLineVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.model.vo.order.NewOrderDataVo;
 import com.gec.interest.model.vo.order.OrderInfoVo;
@@ -55,6 +58,13 @@ public class OrderServiceImpl implements OrderService {
         orderInfoVo.setOrderId(orderId);
         BeanUtils.copyProperties(orderInfo, orderInfoVo);
         return orderInfoVo;
+    }
+    @Autowired
+    private MapFeignClient mapFeignClient;
+
+    @Override
+    public DrivingLineVo calculateDrivingLine(CalculateDrivingLineForm calculateDrivingLineForm) {
+        return mapFeignClient.calculateDrivingLine(calculateDrivingLineForm).getData();
     }
 
 }

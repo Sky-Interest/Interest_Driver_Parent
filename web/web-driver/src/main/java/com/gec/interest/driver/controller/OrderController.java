@@ -4,17 +4,17 @@ import com.gec.interest.common.login.InterestLogin;
 import com.gec.interest.common.result.Result;
 import com.gec.interest.common.util.AuthContextHolder;
 import com.gec.interest.driver.service.OrderService;
+import com.gec.interest.model.vo.map.DrivingLineVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.model.vo.order.NewOrderDataVo;
 import com.gec.interest.model.vo.order.OrderInfoVo;
+import com.gec.interest.model.form.map.CalculateDrivingLineForm;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 
 import java.util.List;
 
@@ -68,6 +68,12 @@ public class OrderController {
     public Result<OrderInfoVo> getOrderInfo(@PathVariable Long orderId) {
         Long driverId = AuthContextHolder.getUserId();
         return Result.ok(orderService.getOrderInfo(orderId, driverId));
+    }
+    @Operation(summary = "计算最佳驾驶线路")
+    @InterestLogin
+    @PostMapping("/calculateDrivingLine")
+    public Result<DrivingLineVo> calculateDrivingLine(@RequestBody CalculateDrivingLineForm calculateDrivingLineForm) {
+        return Result.ok(orderService.calculateDrivingLine(calculateDrivingLineForm));
     }
 
 }
