@@ -11,6 +11,7 @@ import com.gec.interest.model.form.rules.FeeRuleRequestForm;
 import com.gec.interest.model.vo.customer.ExpectOrderVo;
 import com.gec.interest.model.vo.dispatch.NewOrderTaskVo;
 import com.gec.interest.model.vo.map.DrivingLineVo;
+import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.model.vo.rules.FeeRuleResponseVo;
 import com.gec.interest.order.client.OrderInfoFeignClient;
 import com.gec.interest.rules.client.FeeRuleFeignClient;
@@ -106,6 +107,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Integer getOrderStatus(Long orderId) {
         return orderInfoFeignClient.getOrderStatus(orderId).getData();
+    }
+    @Override
+    public CurrentOrderInfoVo searchCustomerCurrentOrder(Long customerId) {
+        return orderInfoFeignClient.searchCustomerCurrentOrder(customerId).getData();
     }
 
 }
