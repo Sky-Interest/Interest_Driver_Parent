@@ -7,6 +7,7 @@ import com.gec.interest.driver.service.OrderService;
 import com.gec.interest.map.client.MapFeignClient;
 import com.gec.interest.model.entity.order.OrderInfo;
 import com.gec.interest.model.form.map.CalculateDrivingLineForm;
+import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.map.DrivingLineVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.model.vo.order.NewOrderDataVo;
@@ -69,6 +70,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Boolean driverArriveStartLocation(Long orderId, Long driverId) {
         return orderInfoFeignClient.driverArriveStartLocation(orderId, driverId).getData();
+    }
+    @Override
+    public Boolean updateOrderCart(UpdateOrderCartForm updateOrderCartForm) {
+        return orderInfoFeignClient.updateOrderCart(updateOrderCartForm).getData();
     }
 
 }

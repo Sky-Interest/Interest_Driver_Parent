@@ -3,6 +3,7 @@ package com.gec.interest.order.client;
 import com.gec.interest.common.result.Result;
 import com.gec.interest.model.entity.order.OrderInfo;
 import com.gec.interest.model.form.order.OrderInfoForm;
+import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -64,5 +65,12 @@ public interface OrderInfoFeignClient {
      */
     @GetMapping("/order/info/driverArriveStartLocation/{orderId}/{driverId}")
     Result<Boolean> driverArriveStartLocation(@PathVariable("orderId") Long orderId, @PathVariable("driverId") Long driverId);
+    /**
+     * 更新代驾车辆信息
+     * @param updateOrderCartForm
+     * @return
+     */
+    @PostMapping("/order/info//updateOrderCart")
+    Result<Boolean> updateOrderCart(@RequestBody UpdateOrderCartForm updateOrderCartForm);
 
 }

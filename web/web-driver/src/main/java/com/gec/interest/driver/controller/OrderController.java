@@ -4,6 +4,7 @@ import com.gec.interest.common.login.InterestLogin;
 import com.gec.interest.common.result.Result;
 import com.gec.interest.common.util.AuthContextHolder;
 import com.gec.interest.driver.service.OrderService;
+import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.map.DrivingLineVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.model.vo.order.NewOrderDataVo;
@@ -81,6 +82,14 @@ public class OrderController {
     public Result<Boolean> driverArriveStartLocation(@PathVariable Long orderId) {
         Long driverId = AuthContextHolder.getUserId();
         return Result.ok(orderService.driverArriveStartLocation(orderId, driverId));
+    }
+    @Operation(summary = "更新代驾车辆信息")
+    @InterestLogin
+    @PostMapping("/updateOrderCart")
+    public Result<Boolean> updateOrderCart(@RequestBody UpdateOrderCartForm updateOrderCartForm) {
+        Long driverId = AuthContextHolder.getUserId();
+        updateOrderCartForm.setDriverId(driverId);
+        return Result.ok(orderService.updateOrderCart(updateOrderCartForm));
     }
 
 }

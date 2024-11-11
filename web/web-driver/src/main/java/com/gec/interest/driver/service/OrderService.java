@@ -1,6 +1,7 @@
 package com.gec.interest.driver.service;
 
 import com.gec.interest.model.form.map.CalculateDrivingLineForm;
+import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.map.DrivingLineVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.model.vo.order.NewOrderDataVo;
@@ -16,6 +17,7 @@ public interface OrderService {
     OrderInfoVo getOrderInfo(Long orderId, Long customerId);
     DrivingLineVo calculateDrivingLine(CalculateDrivingLineForm calculateDrivingLineForm);
     Boolean driverArriveStartLocation(Long orderId, Long driverId);
+    Boolean updateOrderCart(UpdateOrderCartForm updateOrderCartForm);
 
 
 }

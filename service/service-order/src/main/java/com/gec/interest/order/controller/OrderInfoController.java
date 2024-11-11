@@ -3,6 +3,7 @@ package com.gec.interest.order.controller;
 import com.gec.interest.common.result.Result;
 import com.gec.interest.model.entity.order.OrderInfo;
 import com.gec.interest.model.form.order.OrderInfoForm;
+import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.order.service.OrderInfoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,6 +54,11 @@ public class OrderInfoController {
     @GetMapping("/driverArriveStartLocation/{orderId}/{driverId}")
     public Result<Boolean> driverArriveStartLocation(@PathVariable Long orderId, @PathVariable Long driverId) {
         return Result.ok(orderInfoService.driverArriveStartLocation(orderId, driverId));
+    }
+    @Operation(summary = "更新代驾车辆信息")
+    @PostMapping("/updateOrderCart")
+    public Result<Boolean> updateOrderCart(@RequestBody UpdateOrderCartForm updateOrderCartForm) {
+        return Result.ok(orderInfoService.updateOrderCart(updateOrderCartForm));
     }
 
 }

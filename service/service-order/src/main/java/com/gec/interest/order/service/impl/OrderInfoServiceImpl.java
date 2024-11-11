@@ -8,6 +8,7 @@ import com.gec.interest.model.entity.order.OrderInfo;
 import com.gec.interest.model.entity.order.OrderStatusLog;
 import com.gec.interest.model.enums.OrderStatus;
 import com.gec.interest.model.form.order.OrderInfoForm;
+import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.order.mapper.OrderInfoMapper;
 import com.gec.interest.order.mapper.OrderStatusLogMapper;
@@ -207,6 +208,26 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         if(row == 1) {
             //记录日志
             this.log(orderId, OrderStatus.DRIVER_ARRIVED.getStatus());
+        } else {
+            throw new interestException(ResultCodeEnum.UPDATE_ERROR);
+        }
+        return true;
+    }
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Boolean updateOrderCart(UpdateOrderCartForm updateOrderCartForm) {
+        LambdaQueryWrapper<OrderInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(OrderInfo::getId, updateOrderCartForm.getOrderId());
+        queryWrapper.eq(OrderInfo::getDriverId, updateOrderCartForm.getDriverId());
+
+        OrderInfo updateOrderInfo = new OrderInfo();
+        BeanUtils.copyProperties(updateOrderCartForm, updateOrderInfo);
+        updateOrderInfo.setStatus(OrderStatus.UPDATE_CART_INFO.getStatus());
+        //只能更新自己的订单
+        int row = orderInfoMapper.update(updateOrderInfo, queryWrapper);
+        if(row == 1) {
+            //记录日志
+            this.log(updateOrderCartForm.getOrderId(), OrderStatus.UPDATE_CART_INFO.getStatus());
         } else {
             throw new interestException(ResultCodeEnum.UPDATE_ERROR);
         }
