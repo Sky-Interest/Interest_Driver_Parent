@@ -8,6 +8,7 @@ import com.gec.interest.model.form.customer.ExpectOrderForm;
 import com.gec.interest.model.form.customer.SubmitOrderForm;
 import com.gec.interest.model.vo.customer.ExpectOrderVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
+import com.gec.interest.model.vo.order.OrderInfoVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -57,6 +58,13 @@ public class OrderController {
     public Result<CurrentOrderInfoVo> searchCustomerCurrentOrder() {
         Long customerId = AuthContextHolder.getUserId();
         return Result.ok(orderService.searchCustomerCurrentOrder(customerId));
+    }
+    @Operation(summary = "获取订单信息")
+    @InterestLogin
+    @GetMapping("/getOrderInfo/{orderId}")
+    public Result<OrderInfoVo> getOrderInfo(@PathVariable Long orderId) {
+        Long customerId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.getOrderInfo(orderId, customerId));
     }
 }
 

@@ -1,6 +1,7 @@
 package com.gec.interest.order.controller;
 
 import com.gec.interest.common.result.Result;
+import com.gec.interest.model.entity.order.OrderInfo;
 import com.gec.interest.model.form.order.OrderInfoForm;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.order.service.OrderInfoService;
@@ -42,6 +43,11 @@ public class OrderInfoController {
     @GetMapping("/searchDriverCurrentOrder/{driverId}")
     public Result<CurrentOrderInfoVo> searchDriverCurrentOrder(@PathVariable Long driverId) {
         return Result.ok(orderInfoService.searchDriverCurrentOrder(driverId));
+    }
+    @Operation(summary = "根据订单id获取订单信息")
+    @GetMapping("/getOrderInfo/{orderId}")
+    public Result<OrderInfo> getOrderInfo(@PathVariable Long orderId) {
+        return Result.ok(orderInfoService.getById(orderId));
     }
 
 }

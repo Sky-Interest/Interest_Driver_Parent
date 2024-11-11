@@ -1,8 +1,11 @@
 package com.gec.interest.customer.service.impl;
 
+import com.gec.interest.common.execption.interestException;
+import com.gec.interest.common.result.ResultCodeEnum;
 import com.gec.interest.customer.service.OrderService;
 import com.gec.interest.dispatch.client.NewOrderFeignClient;
 import com.gec.interest.map.client.MapFeignClient;
+import com.gec.interest.model.entity.order.OrderInfo;
 import com.gec.interest.model.form.customer.ExpectOrderForm;
 import com.gec.interest.model.form.customer.SubmitOrderForm;
 import com.gec.interest.model.form.map.CalculateDrivingLineForm;
@@ -12,6 +15,7 @@ import com.gec.interest.model.vo.customer.ExpectOrderVo;
 import com.gec.interest.model.vo.dispatch.NewOrderTaskVo;
 import com.gec.interest.model.vo.map.DrivingLineVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
+import com.gec.interest.model.vo.order.OrderInfoVo;
 import com.gec.interest.model.vo.rules.FeeRuleResponseVo;
 import com.gec.interest.order.client.OrderInfoFeignClient;
 import com.gec.interest.rules.client.FeeRuleFeignClient;
@@ -111,6 +115,20 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public CurrentOrderInfoVo searchCustomerCurrentOrder(Long customerId) {
         return orderInfoFeignClient.searchCustomerCurrentOrder(customerId).getData();
+    }
+    @Override
+    public OrderInfoVo getOrderInfo(Long orderId, Long customerId) {
+        //订单信息
+        OrderInfo orderInfo = orderInfoFeignClient.getOrderInfo(orderId).getData();
+        if (orderInfo.getCustomerId().longValue() != customerId.longValue()) {
+            throw new interestException(ResultCodeEnum.ILLEGAL_REQUEST);
+        }
+
+        //封装订单信息
+        OrderInfoVo orderInfoVo = new OrderInfoVo();
+        orderInfoVo.setOrderId(orderId);
+        BeanUtils.copyProperties(orderInfo, orderInfoVo);
+        return orderInfoVo;
     }
 
 }
