@@ -5,6 +5,7 @@ import com.gec.interest.model.entity.driver.DriverSet;
 import com.gec.interest.model.form.driver.DriverFaceModelForm;
 import com.gec.interest.model.form.driver.UpdateDriverAuthInfoForm;
 import com.gec.interest.model.vo.driver.DriverAuthInfoVo;
+import com.gec.interest.model.vo.driver.DriverInfoVo;
 import com.gec.interest.model.vo.driver.DriverLoginVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -78,5 +79,12 @@ public interface DriverInfoFeignClient {
      */
     @GetMapping("/driver/info/updateServiceStatus/{driverId}/{status}")
     Result<Boolean> updateServiceStatus(@PathVariable("driverId") Long driverId, @PathVariable("status") Integer status);
+    /**
+     * 获取司机基本信息
+     * @param driverId
+     * @return
+     */
+    @GetMapping("/driver/info/getDriverInfo/{driverId}")
+    Result<DriverInfoVo> getDriverInfo(@PathVariable("driverId") Long driverId);
 
 }

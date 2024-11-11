@@ -15,6 +15,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gec.interest.model.form.driver.DriverFaceModelForm;
 import com.gec.interest.model.form.driver.UpdateDriverAuthInfoForm;
 import com.gec.interest.model.vo.driver.DriverAuthInfoVo;
+import com.gec.interest.model.vo.driver.DriverInfoVo;
 import com.gec.interest.model.vo.driver.DriverLoginVo;
 import com.tencentcloudapi.common.AbstractModel;
 import com.tencentcloudapi.common.Credential;
@@ -301,6 +302,16 @@ public class DriverInfoServiceImpl extends ServiceImpl<DriverInfoMapper, DriverI
         driverSet.setServiceStatus(status);
         driverSetMapper.update(driverSet, queryWrapper);
         return true;
+    }
+    @Override
+    public DriverInfoVo getDriverInfo(Long driverId) {
+        DriverInfo driverInfo = this.getById(driverId);
+        DriverInfoVo driverInfoVo = new DriverInfoVo();
+        BeanUtils.copyProperties(driverInfo, driverInfoVo);
+        //驾龄
+        Integer driverLicenseAge = new DateTime().getYear() - new DateTime(driverInfo.getDriverLicenseIssueDate()).getYear() + 1;
+        driverInfoVo.setDriverLicenseAge(driverLicenseAge);
+        return driverInfoVo;
     }
 
 }

@@ -6,6 +6,7 @@ import com.gec.interest.model.entity.driver.DriverSet;
 import com.gec.interest.model.form.driver.DriverFaceModelForm;
 import com.gec.interest.model.form.driver.UpdateDriverAuthInfoForm;
 import com.gec.interest.model.vo.driver.DriverAuthInfoVo;
+import com.gec.interest.model.vo.driver.DriverInfoVo;
 import com.gec.interest.model.vo.driver.DriverLoginVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -66,6 +67,11 @@ public class DriverInfoController {
     @GetMapping("/updateServiceStatus/{driverId}/{status}")
     public Result<Boolean> updateServiceStatus(@PathVariable Long driverId, @PathVariable Integer status) {
         return Result.ok(driverInfoService.updateServiceStatus(driverId, status));
+    }
+    @Operation(summary = "获取司机基本信息")
+    @GetMapping("/getDriverInfo/{driverId}")
+    public Result<DriverInfoVo> getDriverInfo(@PathVariable Long driverId) {
+        return Result.ok(driverInfoService.getDriverInfo(driverId));
     }
 
 

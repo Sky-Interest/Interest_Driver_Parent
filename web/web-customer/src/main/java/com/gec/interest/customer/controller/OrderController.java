@@ -7,6 +7,7 @@ import com.gec.interest.customer.service.OrderService;
 import com.gec.interest.model.form.customer.ExpectOrderForm;
 import com.gec.interest.model.form.customer.SubmitOrderForm;
 import com.gec.interest.model.vo.customer.ExpectOrderVo;
+import com.gec.interest.model.vo.driver.DriverInfoVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.model.vo.order.OrderInfoVo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -65,6 +66,13 @@ public class OrderController {
     public Result<OrderInfoVo> getOrderInfo(@PathVariable Long orderId) {
         Long customerId = AuthContextHolder.getUserId();
         return Result.ok(orderService.getOrderInfo(orderId, customerId));
+    }
+    @Operation(summary = "根据订单id获取司机基本信息")
+    @InterestLogin
+    @GetMapping("/getDriverInfo/{orderId}")
+    public Result<DriverInfoVo> getDriverInfo(@PathVariable Long orderId) {
+        Long customerId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.getDriverInfo(orderId, customerId));
     }
 }
 
