@@ -2,6 +2,7 @@ package com.gec.interest.driver.service.impl;
 
 import com.gec.interest.dispatch.client.NewOrderFeignClient;
 import com.gec.interest.driver.service.OrderService;
+import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.model.vo.order.NewOrderDataVo;
 import com.gec.interest.order.client.OrderInfoFeignClient;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +32,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Boolean robNewOrder(Long driverId, Long orderId) {
         return orderInfoFeignClient.robNewOrder(driverId, orderId).getData();
+    }
+    @Override
+    public CurrentOrderInfoVo searchDriverCurrentOrder(Long driverId) {
+        return orderInfoFeignClient.searchDriverCurrentOrder(driverId).getData();
     }
 
 }

@@ -39,20 +39,27 @@ public class OrderController {
         Long driverId = AuthContextHolder.getUserId();
         return Result.ok(orderService.findNewOrderQueueData(driverId));
     }
-    @Operation(summary = "查找司机端当前订单")
-    @InterestLogin
-    @GetMapping("/searchDriverCurrentOrder")
-    public Result<CurrentOrderInfoVo> searchDriverCurrentOrder() {
-        CurrentOrderInfoVo currentOrderInfoVo = new CurrentOrderInfoVo();
-        currentOrderInfoVo.setIsHasCurrentOrder(false);
-        return Result.ok(currentOrderInfoVo);
-    }
+//    @Operation(summary = "查找司机端当前订单")
+//    @InterestLogin
+//    @GetMapping("/searchDriverCurrentOrder")
+//    public Result<CurrentOrderInfoVo> searchDriverCurrentOrder() {
+//        CurrentOrderInfoVo currentOrderInfoVo = new CurrentOrderInfoVo();
+//        currentOrderInfoVo.setIsHasCurrentOrder(false);
+//        return Result.ok(currentOrderInfoVo);
+//    }
     @Operation(summary = "司机抢单")
     @InterestLogin
     @GetMapping("/robNewOrder/{orderId}")
     public Result<Boolean> robNewOrder(@PathVariable Long orderId) {
         Long driverId = AuthContextHolder.getUserId();
         return Result.ok(orderService.robNewOrder(driverId, orderId));
+    }
+    @Operation(summary = "司机端查找当前订单")
+    @InterestLogin
+    @GetMapping("/searchDriverCurrentOrder")
+    public Result<CurrentOrderInfoVo> searchDriverCurrentOrder() {
+        Long driverId = AuthContextHolder.getUserId();
+        return Result.ok(orderService.searchDriverCurrentOrder(driverId));
     }
 
 }
