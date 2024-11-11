@@ -5,6 +5,7 @@ import com.gec.interest.common.result.ResultCodeEnum;
 import com.gec.interest.customer.service.OrderService;
 import com.gec.interest.dispatch.client.NewOrderFeignClient;
 import com.gec.interest.driver.client.DriverInfoFeignClient;
+import com.gec.interest.map.client.LocationFeignClient;
 import com.gec.interest.map.client.MapFeignClient;
 import com.gec.interest.model.entity.order.OrderInfo;
 import com.gec.interest.model.form.customer.ExpectOrderForm;
@@ -16,6 +17,7 @@ import com.gec.interest.model.vo.customer.ExpectOrderVo;
 import com.gec.interest.model.vo.dispatch.NewOrderTaskVo;
 import com.gec.interest.model.vo.driver.DriverInfoVo;
 import com.gec.interest.model.vo.map.DrivingLineVo;
+import com.gec.interest.model.vo.map.OrderLocationVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.model.vo.order.OrderInfoVo;
 import com.gec.interest.model.vo.rules.FeeRuleResponseVo;
@@ -46,6 +48,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private DriverInfoFeignClient driverInfoFeignClient;
+
+    @Autowired
+    private LocationFeignClient locationFeignClient;
 
 
     @Override
@@ -142,6 +147,10 @@ public class OrderServiceImpl implements OrderService {
             throw new interestException(ResultCodeEnum.ILLEGAL_REQUEST);
         }
         return driverInfoFeignClient.getDriverInfo(orderInfo.getDriverId()).getData();
+    }
+    @Override
+    public OrderLocationVo getCacheOrderLocation(Long orderId) {
+        return locationFeignClient.getCacheOrderLocation(orderId).getData();
     }
 
 }

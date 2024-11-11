@@ -5,11 +5,9 @@ import com.gec.interest.model.form.map.SearchNearByDriverForm;
 import com.gec.interest.model.form.map.UpdateDriverLocationForm;
 import com.gec.interest.model.form.map.UpdateOrderLocationForm;
 import com.gec.interest.model.vo.map.NearByDriverVo;
+import com.gec.interest.model.vo.map.OrderLocationVo;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -43,5 +41,12 @@ public interface LocationFeignClient {
      */
     @PostMapping("/map/location/updateOrderLocationToCache")
     Result<Boolean> updateOrderLocationToCache(@RequestBody UpdateOrderLocationForm updateOrderLocationForm);
+    /**
+     * 司机赶往代驾起始点：获取订单经纬度位置
+     * @param orderId
+     * @return
+     */
+    @GetMapping("/map/location/getCacheOrderLocation/{orderId}")
+    Result<OrderLocationVo> getCacheOrderLocation(@PathVariable("orderId") Long orderId);
 
 }

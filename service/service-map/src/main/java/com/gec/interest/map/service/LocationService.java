@@ -4,6 +4,7 @@ import com.gec.interest.model.form.map.SearchNearByDriverForm;
 import com.gec.interest.model.form.map.UpdateDriverLocationForm;
 import com.gec.interest.model.form.map.UpdateOrderLocationForm;
 import com.gec.interest.model.vo.map.NearByDriverVo;
+import com.gec.interest.model.vo.map.OrderLocationVo;
 
 import java.util.List;
 
@@ -13,4 +14,5 @@ public interface LocationService {
     Boolean removeDriverLocation(Long driverId);
     List<NearByDriverVo> searchNearByDriver(SearchNearByDriverForm searchNearByDriverForm);
     Boolean updateOrderLocationToCache(UpdateOrderLocationForm updateOrderLocationForm);
+    OrderLocationVo getCacheOrderLocation(Long orderId);
 }
