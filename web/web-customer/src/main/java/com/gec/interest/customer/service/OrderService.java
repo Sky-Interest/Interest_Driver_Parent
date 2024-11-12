@@ -7,6 +7,7 @@ import com.gec.interest.model.vo.customer.ExpectOrderVo;
 import com.gec.interest.model.vo.driver.DriverInfoVo;
 import com.gec.interest.model.vo.map.DrivingLineVo;
 import com.gec.interest.model.vo.map.OrderLocationVo;
+import com.gec.interest.model.vo.map.OrderServiceLastLocationVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.model.vo.order.OrderInfoVo;
 
@@ -19,4 +20,6 @@ public interface OrderService {
     DriverInfoVo getDriverInfo(Long orderId, Long customerId);
     OrderLocationVo getCacheOrderLocation(Long orderId);
     DrivingLineVo calculateDrivingLine(CalculateDrivingLineForm calculateDrivingLineForm);
+    OrderServiceLastLocationVo getOrderServiceLastLocation(Long orderId);
+
 }

@@ -7,6 +7,7 @@ import com.gec.interest.model.form.map.UpdateDriverLocationForm;
 import com.gec.interest.model.form.map.UpdateOrderLocationForm;
 import com.gec.interest.model.vo.map.NearByDriverVo;
 import com.gec.interest.model.vo.map.OrderLocationVo;
+import com.gec.interest.model.vo.map.OrderServiceLastLocationVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,6 +57,13 @@ public interface LocationFeignClient {
      */
     @PostMapping("/map/location/saveOrderServiceLocation")
     Result<Boolean> saveOrderServiceLocation(@RequestBody List<OrderServiceLocationForm> orderLocationServiceFormList);
+    /**
+     * 代驾服务：获取订单服务最后一个位置信息
+     * @param orderId
+     * @return
+     */
+    @GetMapping("/map/location/getOrderServiceLastLocation/{orderId}")
+    Result<OrderServiceLastLocationVo> getOrderServiceLastLocation(@PathVariable Long orderId);
 
 
 }

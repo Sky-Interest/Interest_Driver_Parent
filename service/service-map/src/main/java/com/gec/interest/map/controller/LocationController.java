@@ -8,6 +8,7 @@ import com.gec.interest.model.form.map.UpdateDriverLocationForm;
 import com.gec.interest.model.form.map.UpdateOrderLocationForm;
 import com.gec.interest.model.vo.map.NearByDriverVo;
 import com.gec.interest.model.vo.map.OrderLocationVo;
+import com.gec.interest.model.vo.map.OrderServiceLastLocationVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +57,12 @@ public class LocationController {
     public Result<Boolean> saveOrderServiceLocation(@RequestBody List<OrderServiceLocationForm> orderLocationServiceFormList) {
         return Result.ok(locationService.saveOrderServiceLocation(orderLocationServiceFormList));
     }
+    @Operation(summary = "代驾服务：获取订单服务最后一个位置信息")
+    @GetMapping("/getOrderServiceLastLocation/{orderId}")
+    public Result<OrderServiceLastLocationVo> getOrderServiceLastLocation(@PathVariable Long orderId) {
+        return Result.ok(locationService.getOrderServiceLastLocation(orderId));
+    }
+
 
 
 }

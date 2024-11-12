@@ -18,6 +18,7 @@ import com.gec.interest.model.vo.dispatch.NewOrderTaskVo;
 import com.gec.interest.model.vo.driver.DriverInfoVo;
 import com.gec.interest.model.vo.map.DrivingLineVo;
 import com.gec.interest.model.vo.map.OrderLocationVo;
+import com.gec.interest.model.vo.map.OrderServiceLastLocationVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.model.vo.order.OrderInfoVo;
 import com.gec.interest.model.vo.rules.FeeRuleResponseVo;
@@ -156,5 +157,10 @@ public class OrderServiceImpl implements OrderService {
     public DrivingLineVo calculateDrivingLine(CalculateDrivingLineForm calculateDrivingLineForm) {
         return mapFeignClient.calculateDrivingLine(calculateDrivingLineForm).getData();
     }
+    @Override
+    public OrderServiceLastLocationVo getOrderServiceLastLocation(Long orderId) {
+        return locationFeignClient.getOrderServiceLastLocation(orderId).getData();
+    }
+
 
 }

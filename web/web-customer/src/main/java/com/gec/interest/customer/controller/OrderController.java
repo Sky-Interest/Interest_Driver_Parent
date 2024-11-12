@@ -11,6 +11,7 @@ import com.gec.interest.model.vo.customer.ExpectOrderVo;
 import com.gec.interest.model.vo.driver.DriverInfoVo;
 import com.gec.interest.model.vo.map.DrivingLineVo;
 import com.gec.interest.model.vo.map.OrderLocationVo;
+import com.gec.interest.model.vo.map.OrderServiceLastLocationVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.model.vo.order.OrderInfoVo;
 import io.swagger.v3.oas.annotations.Operation;
@@ -89,5 +90,12 @@ public class OrderController {
     public Result<DrivingLineVo> calculateDrivingLine(@RequestBody CalculateDrivingLineForm calculateDrivingLineForm) {
         return Result.ok(orderService.calculateDrivingLine(calculateDrivingLineForm));
     }
+    @Operation(summary = "代驾服务：获取订单服务最后一个位置信息")
+    @InterestLogin
+    @GetMapping("/getOrderServiceLastLocation/{orderId}")
+    public Result<OrderServiceLastLocationVo> getOrderServiceLastLocation(@PathVariable Long orderId) {
+        return Result.ok(orderService.getOrderServiceLastLocation(orderId));
+    }
+
 }
 
