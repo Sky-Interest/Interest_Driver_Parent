@@ -26,14 +26,14 @@ import org.springframework.web.bind.annotation.*;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class OrderController {
 
-//    @Operation(summary = "查找乘客端当前订单")
-//    @InterestLogin
-//    @GetMapping("/searchCustomerCurrentOrder")
-//    public Result<CurrentOrderInfoVo> searchCustomerCurrentOrder() {
-//        CurrentOrderInfoVo currentOrderInfoVo = new CurrentOrderInfoVo();
-//        currentOrderInfoVo.setIsHasCurrentOrder(false);
-//        return Result.ok(currentOrderInfoVo);
-//    }
+    @Operation(summary = "查找乘客端当前订单")
+    @InterestLogin
+    @GetMapping("/searchCustomerCurrentOrder")
+    public Result<CurrentOrderInfoVo> searchCustomerCurrentOrder() {
+        CurrentOrderInfoVo currentOrderInfoVo = new CurrentOrderInfoVo();
+        currentOrderInfoVo.setIsHasCurrentOrder(false);
+        return Result.ok(currentOrderInfoVo);
+    }
     @Autowired
     private OrderService orderService;
 
@@ -56,13 +56,13 @@ public class OrderController {
     public Result<Integer> getOrderStatus(@PathVariable Long orderId) {
         return Result.ok(orderService.getOrderStatus(orderId));
     }
-    @Operation(summary = "乘客端查找当前订单")
-    @InterestLogin
-    @GetMapping("/searchCustomerCurrentOrder")
-    public Result<CurrentOrderInfoVo> searchCustomerCurrentOrder() {
-        Long customerId = AuthContextHolder.getUserId();
-        return Result.ok(orderService.searchCustomerCurrentOrder(customerId));
-    }
+//    @Operation(summary = "乘客端查找当前订单")
+//    @InterestLogin
+//    @GetMapping("/searchCustomerCurrentOrder")
+//    public Result<CurrentOrderInfoVo> searchCustomerCurrentOrder() {
+//        Long customerId = AuthContextHolder.getUserId();
+//        return Result.ok(orderService.searchCustomerCurrentOrder(customerId));
+//    }
     @Operation(summary = "获取订单信息")
     @InterestLogin
     @GetMapping("/getOrderInfo/{orderId}")

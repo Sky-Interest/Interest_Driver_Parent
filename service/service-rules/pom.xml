@@ -31,6 +31,11 @@
             <groupId>org.drools</groupId>
             <artifactId>drools-mvel</artifactId>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.gec.interest</groupId>-->
+<!--            <artifactId>service-util</artifactId>-->
+<!--            <version>1.0</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>
