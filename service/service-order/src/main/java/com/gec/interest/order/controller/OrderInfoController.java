@@ -3,6 +3,7 @@ package com.gec.interest.order.controller;
 import com.gec.interest.common.result.Result;
 import com.gec.interest.model.entity.order.OrderInfo;
 import com.gec.interest.model.form.order.OrderInfoForm;
+import com.gec.interest.model.form.order.StartDriveForm;
 import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.order.service.OrderInfoService;
@@ -60,6 +61,12 @@ public class OrderInfoController {
     public Result<Boolean> updateOrderCart(@RequestBody UpdateOrderCartForm updateOrderCartForm) {
         return Result.ok(orderInfoService.updateOrderCart(updateOrderCartForm));
     }
+    @Operation(summary = "开始代驾服务")
+    @PostMapping("/startDrive")
+    public Result<Boolean> startDrive(@RequestBody StartDriveForm startDriveForm) {
+        return Result.ok(orderInfoService.startDrive(startDriveForm));
+    }
+
 
 }
 

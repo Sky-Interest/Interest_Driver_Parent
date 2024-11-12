@@ -8,6 +8,7 @@ import com.gec.interest.model.entity.order.OrderInfo;
 import com.gec.interest.model.entity.order.OrderStatusLog;
 import com.gec.interest.model.enums.OrderStatus;
 import com.gec.interest.model.form.order.OrderInfoForm;
+import com.gec.interest.model.form.order.StartDriveForm;
 import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.order.mapper.OrderInfoMapper;
@@ -233,5 +234,26 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         }
         return true;
     }
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Boolean startDrive(StartDriveForm startDriveForm) {
+        LambdaQueryWrapper<OrderInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(OrderInfo::getId, startDriveForm.getOrderId());
+        queryWrapper.eq(OrderInfo::getDriverId, startDriveForm.getDriverId());
+
+        OrderInfo updateOrderInfo = new OrderInfo();
+        updateOrderInfo.setStatus(OrderStatus.START_SERVICE.getStatus());
+        updateOrderInfo.setStartServiceTime(new Date());
+        //只能更新自己的订单
+        int row = orderInfoMapper.update(updateOrderInfo, queryWrapper);
+        if(row == 1) {
+            //记录日志
+            this.log(startDriveForm.getOrderId(), OrderStatus.START_SERVICE.getStatus());
+        } else {
+            throw new interestException(ResultCodeEnum.UPDATE_ERROR);
+        }
+        return true;
+    }
+
 
 }
