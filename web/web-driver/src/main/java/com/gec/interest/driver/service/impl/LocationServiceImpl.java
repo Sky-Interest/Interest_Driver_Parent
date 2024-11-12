@@ -6,11 +6,14 @@ import com.gec.interest.driver.client.DriverInfoFeignClient;
 import com.gec.interest.driver.service.LocationService;
 import com.gec.interest.map.client.LocationFeignClient;
 import com.gec.interest.model.entity.driver.DriverSet;
+import com.gec.interest.model.form.map.OrderServiceLocationForm;
 import com.gec.interest.model.form.map.UpdateDriverLocationForm;
 import com.gec.interest.model.form.map.UpdateOrderLocationForm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -38,6 +41,11 @@ public class LocationServiceImpl implements LocationService {
     public Boolean updateOrderLocationToCache(UpdateOrderLocationForm updateOrderLocationForm) {
         return locationFeignClient.updateOrderLocationToCache(updateOrderLocationForm).getData();
     }
+    @Override
+    public Boolean saveOrderServiceLocation(List<OrderServiceLocationForm> orderLocationServiceFormList) {
+        return locationFeignClient.saveOrderServiceLocation(orderLocationServiceFormList).getData();
+    }
+
 
 
 }

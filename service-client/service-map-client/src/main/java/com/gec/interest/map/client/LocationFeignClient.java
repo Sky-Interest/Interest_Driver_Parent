@@ -1,6 +1,7 @@
 package com.gec.interest.map.client;
 
 import com.gec.interest.common.result.Result;
+import com.gec.interest.model.form.map.OrderServiceLocationForm;
 import com.gec.interest.model.form.map.SearchNearByDriverForm;
 import com.gec.interest.model.form.map.UpdateDriverLocationForm;
 import com.gec.interest.model.form.map.UpdateOrderLocationForm;
@@ -48,5 +49,13 @@ public interface LocationFeignClient {
      */
     @GetMapping("/map/location/getCacheOrderLocation/{orderId}")
     Result<OrderLocationVo> getCacheOrderLocation(@PathVariable("orderId") Long orderId);
+    /**
+     * 开始代驾服务：保存代驾服务订单位置
+     * @param orderLocationServiceFormList
+     * @return
+     */
+    @PostMapping("/map/location/saveOrderServiceLocation")
+    Result<Boolean> saveOrderServiceLocation(@RequestBody List<OrderServiceLocationForm> orderLocationServiceFormList);
+
 
 }

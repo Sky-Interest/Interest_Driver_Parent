@@ -1,5 +1,6 @@
 package com.gec.interest.map.service;
 
+import com.gec.interest.model.form.map.OrderServiceLocationForm;
 import com.gec.interest.model.form.map.SearchNearByDriverForm;
 import com.gec.interest.model.form.map.UpdateDriverLocationForm;
 import com.gec.interest.model.form.map.UpdateOrderLocationForm;
@@ -15,4 +16,6 @@ public interface LocationService {
     List<NearByDriverVo> searchNearByDriver(SearchNearByDriverForm searchNearByDriverForm);
     Boolean updateOrderLocationToCache(UpdateOrderLocationForm updateOrderLocationForm);
     OrderLocationVo getCacheOrderLocation(Long orderId);
+    Boolean saveOrderServiceLocation(List<OrderServiceLocationForm> orderLocationServiceFormList);
+
 }

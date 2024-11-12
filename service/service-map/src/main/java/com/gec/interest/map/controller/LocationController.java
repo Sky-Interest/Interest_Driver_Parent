@@ -2,6 +2,7 @@ package com.gec.interest.map.controller;
 
 import com.gec.interest.common.result.Result;
 import com.gec.interest.map.service.LocationService;
+import com.gec.interest.model.form.map.OrderServiceLocationForm;
 import com.gec.interest.model.form.map.SearchNearByDriverForm;
 import com.gec.interest.model.form.map.UpdateDriverLocationForm;
 import com.gec.interest.model.form.map.UpdateOrderLocationForm;
@@ -50,6 +51,12 @@ public class LocationController {
     public Result<OrderLocationVo> getCacheOrderLocation(@PathVariable Long orderId) {
         return Result.ok(locationService.getCacheOrderLocation(orderId));
     }
+    @Operation(summary = "开始代驾服务：保存代驾服务订单位置")
+    @PostMapping("/saveOrderServiceLocation")
+    public Result<Boolean> saveOrderServiceLocation(@RequestBody List<OrderServiceLocationForm> orderLocationServiceFormList) {
+        return Result.ok(locationService.saveOrderServiceLocation(orderLocationServiceFormList));
+    }
+
 
 }
 
