@@ -17,11 +17,16 @@ public class FileController {
     @Autowired
     FileService fileService;
 
-    @Operation(summary = "上传")
-    @PostMapping("/upload")
-    public Result<CosUploadVo> upload(@RequestPart("file") MultipartFile file
-            , @RequestParam(name = "path", defaultValue = "car", required = false) String path) {
-        return Result.ok(fileService.upload(file, path));
+//    @Operation(summary = "上传")
+//    @PostMapping("/upload")
+//    public Result<CosUploadVo> upload(@RequestPart("file") MultipartFile file
+//            , @RequestParam(name = "path", defaultValue = "car", required = false) String path) {
+//        return Result.ok(fileService.upload(file, path));
+//    }
+    @Operation(summary = "Minio文件上传")
+    @PostMapping("upload")
+    public Result<String> upload(@RequestPart("file") MultipartFile file) {
+        return Result.ok(fileService.upload(file));
     }
 
 }
