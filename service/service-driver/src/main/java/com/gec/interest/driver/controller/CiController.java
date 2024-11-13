@@ -1,9 +1,15 @@
 package com.gec.interest.driver.controller;
 
+import com.gec.interest.common.result.Result;
+import com.gec.interest.driver.service.CiService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.web.bind.annotation.*;
+import com.gec.interest.model.vo.order.TextAuditingVo;
 
 @Slf4j
 @Tag(name = "腾讯云CI审核接口管理")
@@ -11,6 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value="/cos")
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class CiController {
+    @Autowired
+    private CiService ciService;
+
+    @Operation(summary = "文本审核")
+    @PostMapping("/textAuditing")
+    public Result<TextAuditingVo> textAuditing(@RequestBody String content) {
+        return Result.ok(ciService.textAuditing(content));
+    }
 
 
 }

@@ -2,6 +2,7 @@ package com.gec.interest.driver.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.gec.interest.driver.config.TencentCloudProperties;
+import com.gec.interest.driver.service.CiService;
 import com.gec.interest.driver.service.CosService;
 import com.gec.interest.model.vo.driver.CosUploadVo;
 import com.qcloud.cos.COSClient;
@@ -30,6 +31,8 @@ import java.util.UUID;
 public class CosServiceImpl implements CosService {
     @Autowired
     private TencentCloudProperties tencentCloudProperties;
+    @Autowired
+    private CiService ciService;
 
     private COSClient getPrivateCOSClient() {
         // 1 初始化用户身份信息（secretId, secretKey）。
@@ -72,6 +75,14 @@ public class CosServiceImpl implements CosService {
         PutObjectResult putObjectResult = cosClient.putObject(putObjectRequest); //上传文件
         log.info(JSON.toJSONString(putObjectResult));
         cosClient.shutdown();
+        //审核图片
+        Boolean isAuditing = ciService.imageAuditing(uploadPath);
+        if(!isAuditing) {
+            //删除违规图片
+            cosClient.deleteObject(tencentCloudProperties.getBucketPrivate(), uploadPath);
+            throw new AnanException(ResultCodeEnum.IMAGE_AUDITION_FAIL);
+        }
+
 
         //封装返回对象
         CosUploadVo cosUploadVo = new CosUploadVo();
