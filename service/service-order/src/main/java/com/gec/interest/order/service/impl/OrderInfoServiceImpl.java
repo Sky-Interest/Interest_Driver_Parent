@@ -266,6 +266,17 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         orderMonitorMapper.insert(orderMonitor);
         return true;
     }
+    @Override
+    public Long getOrderNumByTime(String startTime, String endTime) {
+        //查询条件的构建
+        LambdaQueryWrapper<OrderInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.ge(OrderInfo::getStartServiceTime, startTime);
+        queryWrapper.lt(OrderInfo::getEndServiceTime, endTime);
+        //查询
+        Long count = orderInfoMapper.selectCount(queryWrapper);
+        return count;
+    }
+
 
 
 
