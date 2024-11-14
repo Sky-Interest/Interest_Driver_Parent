@@ -5,6 +5,7 @@ import com.gec.interest.common.constant.RedisConstant;
 import com.gec.interest.common.execption.interestException;
 import com.gec.interest.common.result.ResultCodeEnum;
 import com.gec.interest.model.entity.order.OrderInfo;
+import com.gec.interest.model.entity.order.OrderMonitor;
 import com.gec.interest.model.entity.order.OrderStatusLog;
 import com.gec.interest.model.enums.OrderStatus;
 import com.gec.interest.model.form.order.OrderInfoForm;
@@ -12,9 +13,11 @@ import com.gec.interest.model.form.order.StartDriveForm;
 import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.order.mapper.OrderInfoMapper;
+import com.gec.interest.order.mapper.OrderMonitorMapper;
 import com.gec.interest.order.mapper.OrderStatusLogMapper;
 import com.gec.interest.order.service.OrderInfoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.gec.interest.order.service.OrderMonitorService;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
@@ -41,6 +44,11 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
     @Autowired
     private RedissonClient redissonClient;
+
+    @Autowired
+    private OrderMonitorService orderMonitorService;
+    @Autowired
+    private OrderMonitorMapper orderMonitorMapper;
 
     @Transactional(rollbackFor = {Exception.class})
     @Override
@@ -252,8 +260,15 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         } else {
             throw new interestException(ResultCodeEnum.UPDATE_ERROR);
         }
+
+        //初始化订单监控统计数据
+        OrderMonitor orderMonitor = new OrderMonitor();
+        orderMonitor.setOrderId(startDriveForm.getOrderId());
+//        orderMonitorService.saveOrderMonitor(orderMonitor);
+        orderMonitorMapper.insert(orderMonitor);
         return true;
     }
+
 
 
 }

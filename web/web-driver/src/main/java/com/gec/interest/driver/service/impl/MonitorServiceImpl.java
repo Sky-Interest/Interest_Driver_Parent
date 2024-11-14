@@ -3,6 +3,7 @@ package com.gec.interest.driver.service.impl;
 import com.gec.interest.driver.client.CiFeignClient;
 import com.gec.interest.driver.service.FileService;
 import com.gec.interest.driver.service.MonitorService;
+import com.gec.interest.model.entity.order.OrderMonitor;
 import com.gec.interest.model.entity.order.OrderMonitorRecord;
 import com.gec.interest.model.form.order.OrderMonitorForm;
 import com.gec.interest.model.vo.order.TextAuditingVo;
@@ -25,6 +26,7 @@ public class MonitorServiceImpl implements MonitorService {
     @Autowired
     private CiFeignClient ciFeignClient;
 
+
     @Override
     public Boolean upload(MultipartFile file, OrderMonitorForm orderMonitorForm) {
         //上传对话文件
@@ -41,6 +43,16 @@ public class MonitorServiceImpl implements MonitorService {
         orderMonitorRecord.setResult(textAuditingVo.getResult());
         orderMonitorRecord.setKeywords(textAuditingVo.getKeywords());
         orderMonitorFeignClient.saveMonitorRecord(orderMonitorRecord);
+        //更新订单监控统计
+        OrderMonitor orderMonitor = orderMonitorFeignClient.getOrderMonitor(orderMonitorForm.getOrderId()).getData();
+        int fileNum = orderMonitor.getFileNum() + 1;
+        orderMonitor.setFileNum(fileNum);
+        //审核结果: 0（审核正常），1 （判定为违规敏感文件），2（疑似敏感，建议人工复核）。
+        if("3".equals(orderMonitorRecord.getResult())) {
+            int auditNum = orderMonitor.getAuditNum() + 1;
+            orderMonitor.setAuditNum(auditNum);
+        }
+        orderMonitorFeignClient.updateOrderMonitor(orderMonitor);
         return true;
     }
 

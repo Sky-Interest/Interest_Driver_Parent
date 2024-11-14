@@ -1,5 +1,6 @@
 package com.gec.interest.order.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.gec.interest.model.entity.order.OrderMonitor;
 import com.gec.interest.model.entity.order.OrderMonitorRecord;
 import com.gec.interest.order.mapper.OrderMonitorMapper;
@@ -15,10 +16,23 @@ public class OrderMonitorServiceImpl extends ServiceImpl<OrderMonitorMapper, Ord
     @Autowired
     private OrderMonitorRecordRepository orderMonitorRecordRepository;
 
+
     @Override
     public Boolean saveOrderMonitorRecord(OrderMonitorRecord orderMonitorRecord) {
         orderMonitorRecordRepository.save(orderMonitorRecord);
         return true;
+    }
+
+
+
+    @Override
+    public OrderMonitor getOrderMonitor(Long orderId) {
+        return this.getOne(new LambdaQueryWrapper<OrderMonitor>().eq(OrderMonitor::getOrderId, orderId));
+    }
+
+    @Override
+    public Boolean updateOrderMonitor(OrderMonitor orderMonitor) {
+        return this.updateById(orderMonitor);
     }
 
 
