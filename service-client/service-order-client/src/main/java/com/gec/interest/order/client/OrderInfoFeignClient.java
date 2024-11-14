@@ -4,6 +4,7 @@ import com.gec.interest.common.result.Result;
 import com.gec.interest.model.entity.order.OrderInfo;
 import com.gec.interest.model.form.order.OrderInfoForm;
 import com.gec.interest.model.form.order.StartDriveForm;
+import com.gec.interest.model.form.order.UpdateOrderBillForm;
 import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -88,6 +89,13 @@ public interface OrderInfoFeignClient {
      */
     @GetMapping("/order/info/getOrderNumByTime/{startTime}/{endTime}")
     Result<Long> getOrderNumByTime(@PathVariable("startTime") String startTime, @PathVariable("endTime") String endTime);
+    /**
+     * 结束代驾服务更新订单账单
+     * @param updateOrderBillForm
+     * @return
+     */
+    @PostMapping("/order/info/endDrive")
+    Result<Boolean> endDrive(@RequestBody UpdateOrderBillForm updateOrderBillForm);
 
 
 }

@@ -4,6 +4,7 @@ import com.gec.interest.model.entity.order.OrderInfo;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gec.interest.model.form.order.OrderInfoForm;
 import com.gec.interest.model.form.order.StartDriveForm;
+import com.gec.interest.model.form.order.UpdateOrderBillForm;
 import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 
@@ -18,4 +19,6 @@ public interface OrderInfoService extends IService<OrderInfo> {
     Boolean startDrive(StartDriveForm startDriveForm);
 
     Long getOrderNumByTime(String startTime, String endTime);
+
+    Boolean endDrive(UpdateOrderBillForm updateOrderBillForm);
 }

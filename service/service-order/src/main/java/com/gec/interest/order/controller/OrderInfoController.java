@@ -4,6 +4,7 @@ import com.gec.interest.common.result.Result;
 import com.gec.interest.model.entity.order.OrderInfo;
 import com.gec.interest.model.form.order.OrderInfoForm;
 import com.gec.interest.model.form.order.StartDriveForm;
+import com.gec.interest.model.form.order.UpdateOrderBillForm;
 import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.order.service.OrderInfoService;
@@ -70,6 +71,11 @@ public class OrderInfoController {
     @GetMapping("/getOrderNumByTime/{startTime}/{endTime}")
     public Result<Long> getOrderNumByTime(@PathVariable String startTime, @PathVariable String endTime) {
         return Result.ok(orderInfoService.getOrderNumByTime(startTime, endTime));
+    }
+    @Operation(summary = "结束代驾服务更新订单账单")
+    @PostMapping("/endDrive")
+    public Result<Boolean> endDrive(@RequestBody UpdateOrderBillForm updateOrderBillForm) {
+        return Result.ok(orderInfoService.endDrive(updateOrderBillForm));
     }
 
 

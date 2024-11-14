@@ -4,17 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.gec.interest.common.constant.RedisConstant;
 import com.gec.interest.common.execption.interestException;
 import com.gec.interest.common.result.ResultCodeEnum;
-import com.gec.interest.model.entity.order.OrderInfo;
-import com.gec.interest.model.entity.order.OrderMonitor;
-import com.gec.interest.model.entity.order.OrderStatusLog;
+import com.gec.interest.model.entity.order.*;
 import com.gec.interest.model.enums.OrderStatus;
 import com.gec.interest.model.form.order.OrderInfoForm;
 import com.gec.interest.model.form.order.StartDriveForm;
+import com.gec.interest.model.form.order.UpdateOrderBillForm;
 import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
-import com.gec.interest.order.mapper.OrderInfoMapper;
-import com.gec.interest.order.mapper.OrderMonitorMapper;
-import com.gec.interest.order.mapper.OrderStatusLogMapper;
+import com.gec.interest.order.mapper.*;
 import com.gec.interest.order.service.OrderInfoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gec.interest.order.service.OrderMonitorService;
@@ -47,6 +44,12 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
     @Autowired
     private OrderMonitorMapper orderMonitorMapper;
+
+    @Autowired
+    private OrderBillMapper orderBillMapper;
+
+    @Autowired
+    private OrderProfitsharingMapper orderProfitsharingMapper;
 
     @Transactional(rollbackFor = {Exception.class})
     @Override
@@ -275,6 +278,45 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         //查询
         Long count = orderInfoMapper.selectCount(queryWrapper);
         return count;
+    }
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Boolean endDrive(UpdateOrderBillForm updateOrderBillForm) {
+        //更新订单信息
+        LambdaQueryWrapper<OrderInfo> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(OrderInfo::getId, updateOrderBillForm.getOrderId());
+        queryWrapper.eq(OrderInfo::getDriverId, updateOrderBillForm.getDriverId());
+        //更新字段
+        OrderInfo updateOrderInfo = new OrderInfo();
+        updateOrderInfo.setStatus(OrderStatus.END_SERVICE.getStatus());
+        updateOrderInfo.setRealAmount(updateOrderBillForm.getTotalAmount());
+        updateOrderInfo.setFavourFee(updateOrderBillForm.getFavourFee());
+        updateOrderInfo.setEndServiceTime(new Date());
+        updateOrderInfo.setRealDistance(updateOrderBillForm.getRealDistance());
+        //只能更新自己的订单
+        int row = orderInfoMapper.update(updateOrderInfo, queryWrapper);
+        if(row == 1) {
+            //记录日志
+            this.log(updateOrderBillForm.getOrderId(), OrderStatus.END_SERVICE.getStatus());
+
+            //插入实际账单数据
+            OrderBill orderBill = new OrderBill();
+            BeanUtils.copyProperties(updateOrderBillForm, orderBill);
+            orderBill.setOrderId(updateOrderBillForm.getOrderId());
+            orderBill.setPayAmount(orderBill.getTotalAmount());
+            orderBillMapper.insert(orderBill);
+
+            //插入分账信息数据
+            OrderProfitsharing orderProfitsharing = new OrderProfitsharing();
+            BeanUtils.copyProperties(updateOrderBillForm, orderProfitsharing);
+            orderProfitsharing.setOrderId(updateOrderBillForm.getOrderId());
+            orderProfitsharing.setRuleId(updateOrderBillForm.getProfitsharingRuleId());
+            orderProfitsharing.setStatus(1);
+            orderProfitsharingMapper.insert(orderProfitsharing);
+        } else {
+            throw new interestException(ResultCodeEnum.UPDATE_ERROR);
+        }
+        return true;
     }
 
 
