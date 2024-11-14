@@ -1,6 +1,7 @@
 package com.gec.interest.driver.service;
 
 import com.gec.interest.model.form.map.CalculateDrivingLineForm;
+import com.gec.interest.model.form.order.OrderFeeForm;
 import com.gec.interest.model.form.order.StartDriveForm;
 import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.map.DrivingLineVo;
@@ -22,5 +23,5 @@ public interface OrderService {
     Boolean startDrive(StartDriveForm startDriveForm);
 
 
-
+    Boolean endDrive(OrderFeeForm orderFeeForm);
 }

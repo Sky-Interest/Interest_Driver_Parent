@@ -14,4 +14,5 @@ public class RewardRuleRequestForm {
     @Schema(description = "订单个数")
     private Long orderNum;
 
+
 }

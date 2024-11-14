@@ -4,6 +4,7 @@ import com.gec.interest.common.login.InterestLogin;
 import com.gec.interest.common.result.Result;
 import com.gec.interest.common.util.AuthContextHolder;
 import com.gec.interest.driver.service.OrderService;
+import com.gec.interest.model.form.order.OrderFeeForm;
 import com.gec.interest.model.form.order.StartDriveForm;
 import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.map.DrivingLineVo;
@@ -100,6 +101,14 @@ public class OrderController {
         Long driverId = AuthContextHolder.getUserId();
         startDriveForm.setDriverId(driverId);
         return Result.ok(orderService.startDrive(startDriveForm));
+    }
+    @Operation(summary = "结束代驾服务更新订单账单")
+    @InterestLogin
+    @PostMapping("/endDrive")
+    public Result<Boolean> endDrive(@RequestBody OrderFeeForm orderFeeForm) {
+        Long driverId = AuthContextHolder.getUserId();
+        orderFeeForm.setDriverId(driverId);
+        return Result.ok(orderService.endDrive(orderFeeForm));
     }
 
 
