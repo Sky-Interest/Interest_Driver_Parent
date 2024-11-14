@@ -8,6 +8,7 @@ import com.gec.interest.model.vo.map.NearByDriverVo;
 import com.gec.interest.model.vo.map.OrderLocationVo;
 import com.gec.interest.model.vo.map.OrderServiceLastLocationVo;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface LocationService {
@@ -19,5 +20,6 @@ public interface LocationService {
     OrderLocationVo getCacheOrderLocation(Long orderId);
     Boolean saveOrderServiceLocation(List<OrderServiceLocationForm> orderLocationServiceFormList);
     OrderServiceLastLocationVo getOrderServiceLastLocation(Long orderId);
+    BigDecimal calculateOrderRealDistance(Long orderId);
 
 }

@@ -46,8 +46,6 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     private RedissonClient redissonClient;
 
     @Autowired
-    private OrderMonitorService orderMonitorService;
-    @Autowired
     private OrderMonitorMapper orderMonitorMapper;
 
     @Transactional(rollbackFor = {Exception.class})

@@ -3,6 +3,7 @@ package com.gec.interest.map.service.impl;
 import com.alibaba.nacos.client.naming.utils.CollectionUtils;
 import com.gec.interest.common.constant.RedisConstant;
 import com.gec.interest.common.constant.SystemConstant;
+import com.gec.interest.common.util.LocationUtil;
 import com.gec.interest.driver.client.DriverInfoFeignClient;
 import com.gec.interest.map.repository.OrderServiceLocationRepository;
 import com.gec.interest.map.service.LocationService;
@@ -15,6 +16,7 @@ import com.gec.interest.model.form.map.UpdateOrderLocationForm;
 import com.gec.interest.model.vo.map.NearByDriverVo;
 import com.gec.interest.model.vo.map.OrderLocationVo;
 import com.gec.interest.model.vo.map.OrderServiceLastLocationVo;
+import com.gec.interest.order.client.OrderInfoFeignClient;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.BeanUtils;
@@ -50,6 +52,8 @@ public class LocationServiceImpl implements LocationService {
     private OrderServiceLocationRepository orderServiceLocationRepository;
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private OrderInfoFeignClient orderInfoFeignClient;
 
     @Override
     public Boolean updateDriverLocation(UpdateDriverLocationForm updateDriverLocationForm) {
@@ -153,6 +157,42 @@ public class LocationServiceImpl implements LocationService {
         OrderServiceLastLocationVo orderServiceLastLocationVo = new OrderServiceLastLocationVo();
         BeanUtils.copyProperties(orderServiceLocation, orderServiceLastLocationVo);
         return orderServiceLastLocationVo;
+    }
+    @Override
+    public BigDecimal calculateOrderRealDistance(Long orderId) {
+        //1、先把mongo中的坐标串信息查询处理
+    /*OrderServiceLocation location = new OrderServiceLocation();
+    location.setOrderId(orderId);
+    Example<OrderServiceLocation> example = Example.of(location);
+    //
+    Sort sort = Sort.by(Sort.Direction.ASC, "createTime");
+    List<OrderServiceLocation> locationList = orderServiceLocationRepository.findAll(example, sort);*/
+        List<OrderServiceLocation> orderServiceLocationList = orderServiceLocationRepository.findByOrderIdByCreateTimeAsc(orderId);
+        //2、循环遍历坐标串、计算距离--累加
+        double realDistance = 0;
+        if (!orderServiceLocationList.isEmpty()) {
+            //假设现在有3个坐标点，计算的段数{2}
+            for (int i = 0, size = orderServiceLocationList.size() - 1; i < size; i++) {// 0 2   [ 0 : 0+1 ] [1 : 1+2]
+                //坐标1
+                OrderServiceLocation location1 = orderServiceLocationList.get(i);
+                //坐标2
+                OrderServiceLocation location2 = orderServiceLocationList.get(i + 1);
+                //计算距离
+                double distance = LocationUtil.getDistance(
+                        location1.getLatitude().doubleValue(), location1.getLongitude().doubleValue(),
+                        location2.getLatitude().doubleValue(), location2.getLongitude().doubleValue()
+                );
+                //累加
+                realDistance += distance;
+            }
+        }
+        //测试模拟结果：由于测试环境时没有办法移动，查询预付的距离、再随机加上一点偏差
+        if (realDistance == 0) {
+            int ran = (int) (Math.random() * 5 + 1);
+            return orderInfoFeignClient.getOrderInfo(orderId).getData().getExpectDistance().add(new BigDecimal(ran));
+        }
+        //3、返回结果
+        return new BigDecimal(realDistance);
     }
 
 }
