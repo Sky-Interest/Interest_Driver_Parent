@@ -1,8 +1,10 @@
 package com.gec.interest.driver.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.gec.interest.common.constant.SystemConstant;
 import com.gec.interest.common.execption.interestException;
 import com.gec.interest.common.result.ResultCodeEnum;
+import com.gec.interest.common.util.LocationUtil;
 import com.gec.interest.dispatch.client.NewOrderFeignClient;
 import com.gec.interest.driver.service.OrderService;
 import com.gec.interest.map.client.LocationFeignClient;
@@ -17,6 +19,8 @@ import com.gec.interest.model.form.rules.FeeRuleRequestForm;
 import com.gec.interest.model.form.rules.ProfitsharingRuleRequestForm;
 import com.gec.interest.model.form.rules.RewardRuleRequestForm;
 import com.gec.interest.model.vo.map.DrivingLineVo;
+import com.gec.interest.model.vo.map.OrderLocationVo;
+import com.gec.interest.model.vo.map.OrderServiceLastLocationVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.model.vo.order.NewOrderDataVo;
 import com.gec.interest.model.vo.order.OrderInfoVo;
@@ -97,6 +101,20 @@ public class OrderServiceImpl implements OrderService {
     }
     @Override
     public Boolean driverArriveStartLocation(Long orderId, Long driverId) {
+        //判断是否刷单行为
+        //1、计算当前位置与起点位置的距离【误差在1公里】
+        OrderInfo orderInfo = orderInfoFeignClient.getOrderInfo(orderId).getData();
+        //获取订单位置
+        OrderLocationVo orderLocationVo = locationFeignClient.getCacheOrderLocation(orderId).getData();
+        //计算、并且入参起点location
+        double distance = LocationUtil.getDistance(
+                orderInfo.getStartPointLatitude().doubleValue(), orderInfo.getStartPointLongitude().doubleValue(),
+                orderLocationVo.getLatitude().doubleValue(), orderLocationVo.getLongitude().doubleValue()
+        );
+        //计算-判断
+        if (distance > SystemConstant.DRIVER_START_LOCATION_DISTION) {
+            throw new interestException(ResultCodeEnum.DRIVER_START_LOCATION_DISTION_ERROR);
+        }
         return orderInfoFeignClient.driverArriveStartLocation(orderId, driverId).getData();
     }
     @Override
@@ -117,18 +135,18 @@ public class OrderServiceImpl implements OrderService {
         }
 
         //2.防止刷单，计算司机的经纬度与代驾的终点经纬度是否在2公里范围内
-   /* OrderServiceLastLocationVo orderServiceLastLocationVo = locationFeignClient.getOrderServiceLastLocation(
-            orderFeeForm.getOrderId()
-    ).getData();
-    //司机的位置与代驾终点位置的距离
-    double distance = LocationUtil.getDistance(
-            orderInfo.getEndPointLatitude().doubleValue(), orderInfo.getEndPointLongitude().doubleValue(),
-            orderServiceLastLocationVo.getLatitude().doubleValue(), orderServiceLastLocationVo.getLongitude().doubleValue()
-    );
-    System.out.println("endDrive---->"+distance);
-    if (distance > SystemConstant.DRIVER_END_LOCATION_DISTION) {//2公里
-        throw new AnanException(ResultCodeEnum.DRIVER_END_LOCATION_DISTION_ERROR);
-    }*/
+        OrderServiceLastLocationVo orderServiceLastLocationVo = locationFeignClient.getOrderServiceLastLocation(
+                orderFeeForm.getOrderId()
+        ).getData();
+        //司机的位置与代驾终点位置的距离
+        double distance = LocationUtil.getDistance(
+                orderInfo.getEndPointLatitude().doubleValue(), orderInfo.getEndPointLongitude().doubleValue(),
+                orderServiceLastLocationVo.getLatitude().doubleValue(), orderServiceLastLocationVo.getLongitude().doubleValue()
+        );
+        System.out.println("endDrive---->"+distance);
+        if (distance > SystemConstant.DRIVER_END_LOCATION_DISTION) {//2公里
+            throw new interestException(ResultCodeEnum.DRIVER_END_LOCATION_DISTION_ERROR);
+        }
 
         //2、计算实际的里程
         BigDecimal realDistance = locationFeignClient.calculateOrderRealDistance(orderInfo.getId()).getData();
@@ -193,6 +211,7 @@ public class OrderServiceImpl implements OrderService {
         System.out.println("--------------- orderInfoFeignClient.endDrive(updateOrderBillForm);---------->" + JSONObject.toJSONString(updateOrderBillForm));
         return true;
     }
+
 
 
 }
