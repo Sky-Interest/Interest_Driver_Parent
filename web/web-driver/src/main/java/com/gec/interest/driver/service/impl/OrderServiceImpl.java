@@ -10,6 +10,7 @@ import com.gec.interest.driver.service.OrderService;
 import com.gec.interest.map.client.LocationFeignClient;
 import com.gec.interest.map.client.MapFeignClient;
 import com.gec.interest.model.entity.order.OrderInfo;
+import com.gec.interest.model.enums.OrderStatus;
 import com.gec.interest.model.form.map.CalculateDrivingLineForm;
 import com.gec.interest.model.form.order.OrderFeeForm;
 import com.gec.interest.model.form.order.StartDriveForm;
@@ -22,9 +23,7 @@ import com.gec.interest.model.vo.base.PageVo;
 import com.gec.interest.model.vo.map.DrivingLineVo;
 import com.gec.interest.model.vo.map.OrderLocationVo;
 import com.gec.interest.model.vo.map.OrderServiceLastLocationVo;
-import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
-import com.gec.interest.model.vo.order.NewOrderDataVo;
-import com.gec.interest.model.vo.order.OrderInfoVo;
+import com.gec.interest.model.vo.order.*;
 import com.gec.interest.model.vo.rules.FeeRuleResponseVo;
 import com.gec.interest.model.vo.rules.ProfitsharingRuleResponseVo;
 import com.gec.interest.model.vo.rules.RewardRuleResponseVo;
@@ -94,10 +93,23 @@ public class OrderServiceImpl implements OrderService {
             throw new interestException(ResultCodeEnum.ILLEGAL_REQUEST);
         }
 
+        //账单信息
+        OrderBillVo orderBillVo = null;
+        //分账信息
+        OrderProfitsharingVo orderProfitsharing = null;
+        if (orderInfo.getStatus().intValue() >= OrderStatus.END_SERVICE.getStatus().intValue()) {
+            orderBillVo = orderInfoFeignClient.getOrderBillInfo(orderId).getData();
+
+            //获取分账信息
+            orderProfitsharing = orderInfoFeignClient.getOrderProfitsharing(orderId).getData();
+        }
+
         //封装订单信息
         OrderInfoVo orderInfoVo = new OrderInfoVo();
         orderInfoVo.setOrderId(orderId);
         BeanUtils.copyProperties(orderInfo, orderInfoVo);
+        orderInfoVo.setOrderBillVo(orderBillVo);
+        orderInfoVo.setOrderProfitsharingVo(orderProfitsharing);
         return orderInfoVo;
     }
     @Autowired
@@ -274,6 +286,8 @@ public class OrderServiceImpl implements OrderService {
     public PageVo findDriverOrderPage(Long driverId, Long page, Long limit) {
         return orderInfoFeignClient.findDriverOrderPage(driverId, page, limit).getData();
     }
+
+
 
 
 
