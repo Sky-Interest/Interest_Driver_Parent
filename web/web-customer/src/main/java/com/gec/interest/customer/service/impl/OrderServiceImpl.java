@@ -8,6 +8,7 @@ import com.gec.interest.driver.client.DriverInfoFeignClient;
 import com.gec.interest.map.client.LocationFeignClient;
 import com.gec.interest.map.client.MapFeignClient;
 import com.gec.interest.model.entity.order.OrderInfo;
+import com.gec.interest.model.enums.OrderStatus;
 import com.gec.interest.model.form.customer.ExpectOrderForm;
 import com.gec.interest.model.form.customer.SubmitOrderForm;
 import com.gec.interest.model.form.map.CalculateDrivingLineForm;
@@ -21,6 +22,7 @@ import com.gec.interest.model.vo.map.DrivingLineVo;
 import com.gec.interest.model.vo.map.OrderLocationVo;
 import com.gec.interest.model.vo.map.OrderServiceLastLocationVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
+import com.gec.interest.model.vo.order.OrderBillVo;
 import com.gec.interest.model.vo.order.OrderInfoVo;
 import com.gec.interest.model.vo.rules.FeeRuleResponseVo;
 import com.gec.interest.order.client.OrderInfoFeignClient;
@@ -136,12 +138,27 @@ public class OrderServiceImpl implements OrderService {
             throw new interestException(ResultCodeEnum.ILLEGAL_REQUEST);
         }
 
+        //获取司机信息
+        DriverInfoVo driverInfoVo = null;
+        if(null != orderInfo.getDriverId()) {
+            driverInfoVo = driverInfoFeignClient.getDriverInfo(orderInfo.getDriverId()).getData();
+        }
+
+        //账单信息
+        OrderBillVo orderBillVo = null;
+        if (orderInfo.getStatus().intValue() >= OrderStatus.UNPAID.getStatus().intValue()) {
+            orderBillVo = orderInfoFeignClient.getOrderBillInfo(orderId).getData();
+        }
+
         //封装订单信息
         OrderInfoVo orderInfoVo = new OrderInfoVo();
         orderInfoVo.setOrderId(orderId);
         BeanUtils.copyProperties(orderInfo, orderInfoVo);
+        orderInfoVo.setOrderBillVo(orderBillVo);
+        orderInfoVo.setDriverInfoVo(driverInfoVo);
         return orderInfoVo;
     }
+
     @Override
     public DriverInfoVo getDriverInfo(Long orderId, Long customerId) {
         OrderInfo orderInfo = orderInfoFeignClient.getOrderInfo(orderId).getData();
