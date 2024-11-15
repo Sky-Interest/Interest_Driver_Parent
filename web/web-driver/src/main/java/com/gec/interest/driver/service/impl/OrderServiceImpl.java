@@ -18,6 +18,7 @@ import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.form.rules.FeeRuleRequestForm;
 import com.gec.interest.model.form.rules.ProfitsharingRuleRequestForm;
 import com.gec.interest.model.form.rules.RewardRuleRequestForm;
+import com.gec.interest.model.vo.base.PageVo;
 import com.gec.interest.model.vo.map.DrivingLineVo;
 import com.gec.interest.model.vo.map.OrderLocationVo;
 import com.gec.interest.model.vo.map.OrderServiceLastLocationVo;
@@ -211,6 +212,11 @@ public class OrderServiceImpl implements OrderService {
         System.out.println("--------------- orderInfoFeignClient.endDrive(updateOrderBillForm);---------->" + JSONObject.toJSONString(updateOrderBillForm));
         return true;
     }
+    @Override
+    public PageVo findDriverOrderPage(Long driverId, Long page, Long limit) {
+        return orderInfoFeignClient.findDriverOrderPage(driverId, page, limit).getData();
+    }
+
 
 
 

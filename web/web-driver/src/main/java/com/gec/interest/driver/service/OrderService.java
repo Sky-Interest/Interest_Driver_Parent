@@ -4,6 +4,7 @@ import com.gec.interest.model.form.map.CalculateDrivingLineForm;
 import com.gec.interest.model.form.order.OrderFeeForm;
 import com.gec.interest.model.form.order.StartDriveForm;
 import com.gec.interest.model.form.order.UpdateOrderCartForm;
+import com.gec.interest.model.vo.base.PageVo;
 import com.gec.interest.model.vo.map.DrivingLineVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.model.vo.order.NewOrderDataVo;
@@ -24,4 +25,6 @@ public interface OrderService {
 
 
     Boolean endDrive(OrderFeeForm orderFeeForm);
+
+    PageVo findDriverOrderPage(Long driverId, Long page, Long limit);
 }
