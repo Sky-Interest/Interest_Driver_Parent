@@ -1,6 +1,8 @@
 package com.gec.interest.driver.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.gec.interest.common.execption.interestException;
+import com.gec.interest.common.result.ResultCodeEnum;
 import com.gec.interest.driver.config.TencentCloudProperties;
 import com.gec.interest.driver.service.CiService;
 import com.gec.interest.driver.service.CosService;
@@ -80,7 +82,7 @@ public class CosServiceImpl implements CosService {
         if(!isAuditing) {
             //删除违规图片
             cosClient.deleteObject(tencentCloudProperties.getBucketPrivate(), uploadPath);
-            throw new AnanException(ResultCodeEnum.IMAGE_AUDITION_FAIL);
+            throw new interestException(ResultCodeEnum.IMAGE_AUDITION_FAIL);
         }
 
 

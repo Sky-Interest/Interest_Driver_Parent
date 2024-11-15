@@ -3,6 +3,7 @@ package com.gec.interest.customer.service;
 import com.gec.interest.model.form.customer.ExpectOrderForm;
 import com.gec.interest.model.form.customer.SubmitOrderForm;
 import com.gec.interest.model.form.map.CalculateDrivingLineForm;
+import com.gec.interest.model.vo.base.PageVo;
 import com.gec.interest.model.vo.customer.ExpectOrderVo;
 import com.gec.interest.model.vo.driver.DriverInfoVo;
 import com.gec.interest.model.vo.map.DrivingLineVo;
@@ -22,4 +23,5 @@ public interface OrderService {
     DrivingLineVo calculateDrivingLine(CalculateDrivingLineForm calculateDrivingLineForm);
     OrderServiceLastLocationVo getOrderServiceLastLocation(Long orderId);
 
+    PageVo findCustomerOrderPage(Long customerId, Long page, Long limit);
 }

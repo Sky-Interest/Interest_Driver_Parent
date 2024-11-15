@@ -23,6 +23,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.geo.Point;
+
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -167,7 +168,7 @@ public class LocationServiceImpl implements LocationService {
     //
     Sort sort = Sort.by(Sort.Direction.ASC, "createTime");
     List<OrderServiceLocation> locationList = orderServiceLocationRepository.findAll(example, sort);*/
-        List<OrderServiceLocation> orderServiceLocationList = orderServiceLocationRepository.findByOrderIdByCreateTimeAsc(orderId);
+        List<OrderServiceLocation> orderServiceLocationList = orderServiceLocationRepository.findByOrderIdOrderByCreateTimeAsc(orderId);
         //2、循环遍历坐标串、计算距离--累加
         double realDistance = 0;
         if (!orderServiceLocationList.isEmpty()) {

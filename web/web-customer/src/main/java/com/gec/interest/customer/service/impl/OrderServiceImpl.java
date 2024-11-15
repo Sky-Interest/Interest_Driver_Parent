@@ -13,6 +13,7 @@ import com.gec.interest.model.form.customer.SubmitOrderForm;
 import com.gec.interest.model.form.map.CalculateDrivingLineForm;
 import com.gec.interest.model.form.order.OrderInfoForm;
 import com.gec.interest.model.form.rules.FeeRuleRequestForm;
+import com.gec.interest.model.vo.base.PageVo;
 import com.gec.interest.model.vo.customer.ExpectOrderVo;
 import com.gec.interest.model.vo.dispatch.NewOrderTaskVo;
 import com.gec.interest.model.vo.driver.DriverInfoVo;
@@ -161,6 +162,11 @@ public class OrderServiceImpl implements OrderService {
     public OrderServiceLastLocationVo getOrderServiceLastLocation(Long orderId) {
         return locationFeignClient.getOrderServiceLastLocation(orderId).getData();
     }
+    @Override
+    public PageVo findCustomerOrderPage(Long customerId, Long page, Long limit) {
+        return orderInfoFeignClient.findCustomerOrderPage(customerId, page, limit).getData();
+    }
+
 
 
 }

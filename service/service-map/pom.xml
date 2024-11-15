@@ -14,10 +14,7 @@
     <version>1.0</version>
 
     <dependencies>
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-mongodb</artifactId>
-        </dependency>
+
 <!--        <dependency>-->
 <!--            <groupId>com.gec.interest</groupId>-->
 <!--            <artifactId>service-util</artifactId>-->
