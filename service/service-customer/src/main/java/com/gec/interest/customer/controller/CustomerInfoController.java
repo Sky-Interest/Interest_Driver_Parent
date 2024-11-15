@@ -36,6 +36,12 @@ public class CustomerInfoController {
 	public Result<CustomerLoginVo> getCustomerLoginInfo(@PathVariable Long customerId) {
 		return Result.ok(customerInfoService.getCustomerLoginInfo(customerId));
 	}
-	
+	@Operation(summary = "获取客户OpenId")
+	@GetMapping("/getCustomerOpenId/{customerId}")
+	public Result<String> getCustomerOpenId(@PathVariable Long customerId) {
+		return Result.ok(customerInfoService.getCustomerOpenId(customerId));
+	}
+
+
 }
 
