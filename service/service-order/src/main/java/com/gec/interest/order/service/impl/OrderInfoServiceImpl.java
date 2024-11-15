@@ -16,6 +16,7 @@ import com.gec.interest.model.vo.base.PageVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.model.vo.order.OrderBillVo;
 import com.gec.interest.model.vo.order.OrderListVo;
+import com.gec.interest.model.vo.order.OrderProfitsharingVo;
 import com.gec.interest.order.mapper.*;
 import com.gec.interest.order.service.OrderInfoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -340,6 +341,13 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         OrderBillVo orderBillVo = new OrderBillVo();
         BeanUtils.copyProperties(orderBill, orderBillVo);
         return orderBillVo;
+    }
+    @Override
+    public OrderProfitsharingVo getOrderProfitsharing(Long orderId) {
+        OrderProfitsharing orderProfitsharing = orderProfitsharingMapper.selectOne(new LambdaQueryWrapper<OrderProfitsharing>().eq(OrderProfitsharing::getOrderId, orderId));
+        OrderProfitsharingVo orderProfitsharingVo = new OrderProfitsharingVo();
+        BeanUtils.copyProperties(orderProfitsharing, orderProfitsharingVo);
+        return orderProfitsharingVo;
     }
 
 
