@@ -9,6 +9,7 @@ import com.gec.interest.model.form.order.UpdateOrderBillForm;
 import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.base.PageVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
+import com.gec.interest.model.vo.order.OrderBillVo;
 import com.gec.interest.order.service.OrderInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -113,6 +114,11 @@ public class OrderInfoController {
         pageVo.setPage(page);
         pageVo.setLimit(limit);
         return Result.ok(pageVo);
+    }
+    @Operation(summary = "根据订单id获取实际账单信息")
+    @GetMapping("/getOrderBillInfo/{orderId}")
+    public Result<OrderBillVo> getOrderBillInfo(@PathVariable Long orderId) {
+        return Result.ok(orderInfoService.getOrderBillInfo(orderId));
     }
 
 

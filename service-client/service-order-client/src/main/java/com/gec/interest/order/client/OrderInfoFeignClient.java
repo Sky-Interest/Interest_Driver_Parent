@@ -8,6 +8,7 @@ import com.gec.interest.model.form.order.UpdateOrderBillForm;
 import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.base.PageVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
+import com.gec.interest.model.vo.order.OrderBillVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -119,7 +120,13 @@ public interface OrderInfoFeignClient {
     Result<PageVo> findDriverOrderPage(@PathVariable("driverId") Long driverId,
                                        @PathVariable("page") Long page,
                                        @PathVariable("limit") Long limit);
-
+    /**
+     * 根据订单id获取实际账单信息
+     * @param orderId
+     * @return
+     */
+    @GetMapping("/order/info/getOrderBillInfo/{orderId}")
+    Result<OrderBillVo> getOrderBillInfo(@PathVariable("orderId") Long orderId);
 
 
 }

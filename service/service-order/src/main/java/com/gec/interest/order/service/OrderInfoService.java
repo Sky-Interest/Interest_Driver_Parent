@@ -9,6 +9,7 @@ import com.gec.interest.model.form.order.UpdateOrderBillForm;
 import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.base.PageVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
+import com.gec.interest.model.vo.order.OrderBillVo;
 
 public interface OrderInfoService extends IService<OrderInfo> {
     Long saveOrderInfo(OrderInfoForm orderInfoForm);
@@ -27,4 +28,6 @@ public interface OrderInfoService extends IService<OrderInfo> {
     PageVo findCustomerOrderPage(Page<OrderInfo> pageParam, Long customerId);
 
     PageVo findDriverOrderPage(Page<OrderInfo> pageParam, Long driverId);
+
+    OrderBillVo getOrderBillInfo(Long orderId);
 }

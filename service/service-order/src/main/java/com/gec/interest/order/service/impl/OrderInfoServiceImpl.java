@@ -14,6 +14,7 @@ import com.gec.interest.model.form.order.UpdateOrderBillForm;
 import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.base.PageVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
+import com.gec.interest.model.vo.order.OrderBillVo;
 import com.gec.interest.model.vo.order.OrderListVo;
 import com.gec.interest.order.mapper.*;
 import com.gec.interest.order.service.OrderInfoService;
@@ -331,6 +332,14 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     public PageVo findDriverOrderPage(Page<OrderInfo> pageParam, Long driverId) {
         IPage<OrderListVo> pageInfo = orderInfoMapper.selectDriverOrderPage(pageParam, driverId);
         return new PageVo(pageInfo.getRecords(), pageInfo.getPages(), pageInfo.getTotal());
+    }
+    @Override
+    public OrderBillVo getOrderBillInfo(Long orderId) {
+        OrderBill orderBill = orderBillMapper.selectOne(new LambdaQueryWrapper<OrderBill>()
+                .eq(OrderBill::getOrderId, orderId));
+        OrderBillVo orderBillVo = new OrderBillVo();
+        BeanUtils.copyProperties(orderBill, orderBillVo);
+        return orderBillVo;
     }
 
 
