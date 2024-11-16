@@ -430,6 +430,21 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         orderRewardVo.setRewardFee(orderBill.getRewardFee());
         return orderRewardVo;
     }
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public void updateProfitsharingStatus(String orderNo) {
+        //查询订单
+        OrderInfo orderInfo = orderInfoMapper.selectOne(new LambdaQueryWrapper<OrderInfo>().eq(OrderInfo::getOrderNo, orderNo).select(OrderInfo::getId));
+
+        //更新状态条件
+        LambdaQueryWrapper<OrderProfitsharing> updateQueryWrapper = new LambdaQueryWrapper<>();
+        updateQueryWrapper.eq(OrderProfitsharing::getOrderId, orderInfo.getId());
+        //更新字段
+        OrderProfitsharing updateOrderProfitsharing = new OrderProfitsharing();
+        updateOrderProfitsharing.setStatus(2);
+        orderProfitsharingMapper.update(updateOrderProfitsharing, updateQueryWrapper);
+    }
+
 
 
 

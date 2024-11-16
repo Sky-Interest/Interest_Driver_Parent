@@ -39,4 +39,6 @@ public interface OrderInfoService extends IService<OrderInfo> {
     Boolean updateOrderPayStatus(String orderNo);
 
     OrderRewardVo getOrderRewardFee(String orderNo);
+
+    void updateProfitsharingStatus(String orderNo);
 }
