@@ -14,4 +14,6 @@ public interface WxPayService {
     Map wxnotify(HttpServletRequest request);
 
     Object queryPayStatus(String orderNo);
+
+    void handleOrder(String orderNo);
 }
