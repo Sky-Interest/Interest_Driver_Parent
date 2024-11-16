@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.gec.interest.common.constant.MqConst;
+import com.gec.interest.common.constant.SystemConstant;
 import com.gec.interest.common.execption.interestException;
 import com.gec.interest.common.result.ResultCodeEnum;
 import com.gec.interest.common.service.RabbitService;
@@ -13,6 +14,8 @@ import com.gec.interest.model.entity.payment.PaymentInfo;
 import com.gec.interest.model.enums.TradeType;
 import com.gec.interest.model.form.driver.TransferForm;
 import com.gec.interest.model.form.payment.PaymentInfoForm;
+import com.gec.interest.model.form.payment.ProfitsharingForm;
+import com.gec.interest.model.vo.order.OrderProfitsharingVo;
 import com.gec.interest.model.vo.order.OrderRewardVo;
 import com.gec.interest.model.vo.payment.WxPrepayVo;
 import com.gec.interest.order.client.OrderInfoFeignClient;
@@ -190,13 +193,13 @@ public class WxPayServiceImpl implements WxPayService {
         }
         return false;
     }
-    //@GlobalTransactional//分布式事务注解
+
     @Override
     public void handleOrder(String orderNo) {
-        //1.更改订单支付状态
+        //更改订单支付状态
         orderInfoFeignClient.updateOrderPayStatus(orderNo);
 
-        //2.处理系统奖励，打入司机账户
+        //处理系统奖励，打入司机账户
         OrderRewardVo orderRewardVo = orderInfoFeignClient.getOrderRewardFee(orderNo).getData();
         if(null != orderRewardVo.getRewardFee() && orderRewardVo.getRewardFee().doubleValue() > 0) {
             TransferForm transferForm = new TransferForm();
@@ -208,7 +211,16 @@ public class WxPayServiceImpl implements WxPayService {
             driverAccountFeignClient.transfer(transferForm);
         }
 
-        //3.TODO分账
+        //分账处理
+        OrderProfitsharingVo orderProfitsharingVo = orderInfoFeignClient.getOrderProfitsharing(orderRewardVo.getOrderId()).getData();
+        //封装分账参数对象
+        ProfitsharingForm profitsharingForm = new ProfitsharingForm();
+        profitsharingForm.setOrderNo(orderNo);
+        profitsharingForm.setAmount(orderProfitsharingVo.getDriverIncome());
+        profitsharingForm.setDriverId(orderRewardVo.getDriverId());
+        //分账有延迟，支付成功后最少2分钟执行分账申请
+        rabbitService.sendDelayMessage(MqConst.EXCHANGE_PROFITSHARING, MqConst.ROUTING_PROFITSHARING
+                , JSON.toJSONString(profitsharingForm), SystemConstant.PROFITSHARING_DELAY_TIME);
     }
 
 

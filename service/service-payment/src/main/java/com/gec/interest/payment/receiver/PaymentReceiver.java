@@ -1,7 +1,10 @@
 package com.gec.interest.payment.receiver;
 
+import com.alibaba.fastjson.JSONObject;
 import com.gec.interest.common.constant.MqConst;
+import com.gec.interest.model.form.payment.ProfitsharingForm;
 import com.gec.interest.payment.service.WxPayService;
+import com.gec.interest.payment.service.WxProfitsharingService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.Exchange;
@@ -20,6 +23,8 @@ public class PaymentReceiver {
 
     @Autowired
     private WxPayService wxPayService;
+    @Autowired
+    private WxProfitsharingService wxProfitsharingService;
 
     /**
      * 订单支付成功，处理支付回调
@@ -35,6 +40,24 @@ public class PaymentReceiver {
     public void paySuccess(String orderNo, Message message, Channel channel) throws IOException {
         wxPayService.handleOrder(orderNo);
         channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+    }
+    /**
+     * 分账消息
+     * @param param
+     * @throws IOException
+     */
+    @RabbitListener(queues = MqConst.QUEUE_PROFITSHARING)
+    public void profitsharingMessage(String param, Message message, Channel channel) throws IOException {
+        try {
+            ProfitsharingForm profitsharingForm = JSONObject.parseObject(param, ProfitsharingForm.class);
+            log.info("分账：{}", param);
+            wxProfitsharingService.profitsharing(profitsharingForm);
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+        } catch (Exception e) {
+            log.info("分账调用失败：{}", e.getMessage());
+            //任务执行失败，就退回队列继续执行，优化：设置退回次数，超过次数记录日志
+            channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, true);
+        }
     }
 
 }
