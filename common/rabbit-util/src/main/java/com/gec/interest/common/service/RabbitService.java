@@ -8,5 +8,6 @@ public class RabbitService {
 
 
     public void sendMessage(String exchangeOrder, String routingPaySuccess, String orderNo) {
+
     }
 }

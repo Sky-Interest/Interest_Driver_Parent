@@ -375,6 +375,48 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         }
         return orderPayVo;
     }
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Boolean updateOrderPayStatus(String orderNo) {
+        //1、查询订单判断订单的状态
+        OrderInfo orderInfo = orderInfoMapper.selectOne(
+                new LambdaQueryWrapper<OrderInfo>()
+                        .eq(OrderInfo::getOrderNo, orderNo)
+                        .select(
+                                OrderInfo::getId,
+                                OrderInfo::getDriverId,
+                                OrderInfo::getStatus
+                        )
+        );
+        //订单信息不存在
+        if (orderInfo == null) {
+            log.error("订单信息不存在，订单号为：" + orderNo);
+            throw new interestException(ResultCodeEnum.DATA_ERROR);
+        }
+        //订单状态已经改为了已支付状态，所以不需要再改了
+        if (orderInfo.getStatus().intValue() == OrderStatus.PAID.getStatus()) {
+            return true;
+        }
+        //2、更新订单状态
+        //对象数据
+        OrderInfo entity = new OrderInfo();
+        entity.setStatus(OrderStatus.PAID.getStatus());
+        entity.setPayTime(new Date());
+        //条件
+        LambdaQueryWrapper<OrderInfo> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(OrderInfo::getOrderNo, orderNo);
+        //执行修改
+        int update = orderInfoMapper.update(entity, lambdaQueryWrapper);
+        if (update == 1) {
+            //记录日志
+            this.log(orderInfo.getId(), OrderStatus.PAID.getStatus());
+        } else {
+            log.error("订单支付回调更新订单状态失败，订单号为：" + orderNo);
+            throw new interestException(ResultCodeEnum.UPDATE_ERROR);
+        }
+        return true;
+    }
+
 
 
 
