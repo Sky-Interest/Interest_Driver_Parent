@@ -8,10 +8,7 @@ import com.gec.interest.model.form.order.StartDriveForm;
 import com.gec.interest.model.form.order.UpdateOrderBillForm;
 import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.base.PageVo;
-import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
-import com.gec.interest.model.vo.order.OrderBillVo;
-import com.gec.interest.model.vo.order.OrderPayVo;
-import com.gec.interest.model.vo.order.OrderProfitsharingVo;
+import com.gec.interest.model.vo.order.*;
 
 public interface OrderInfoService extends IService<OrderInfo> {
     Long saveOrderInfo(OrderInfoForm orderInfoForm);
@@ -40,4 +37,6 @@ public interface OrderInfoService extends IService<OrderInfo> {
     OrderPayVo getOrderPayVo(String orderNo, Long customerId);
 
     Boolean updateOrderPayStatus(String orderNo);
+
+    OrderRewardVo getOrderRewardFee(String orderNo);
 }

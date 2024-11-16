@@ -7,10 +7,7 @@ import com.gec.interest.model.form.order.StartDriveForm;
 import com.gec.interest.model.form.order.UpdateOrderBillForm;
 import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.base.PageVo;
-import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
-import com.gec.interest.model.vo.order.OrderBillVo;
-import com.gec.interest.model.vo.order.OrderPayVo;
-import com.gec.interest.model.vo.order.OrderProfitsharingVo;
+import com.gec.interest.model.vo.order.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -159,6 +156,14 @@ public interface OrderInfoFeignClient {
      */
     @GetMapping("/order/info/updateOrderPayStatus/{orderNo}")
     Result<Boolean> updateOrderPayStatus(@PathVariable("orderNo") String orderNo);
+    /**
+     * 获取订单的系统奖励
+     * @param orderNo
+     * @return
+     */
+    @GetMapping("/order/info/getOrderRewardFee/{orderNo}")
+    Result<OrderRewardVo> getOrderRewardFee(@PathVariable("orderNo") String orderNo);
+
 
 
 

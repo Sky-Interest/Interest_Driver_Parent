@@ -8,10 +8,7 @@ import com.gec.interest.model.form.order.StartDriveForm;
 import com.gec.interest.model.form.order.UpdateOrderBillForm;
 import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.base.PageVo;
-import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
-import com.gec.interest.model.vo.order.OrderBillVo;
-import com.gec.interest.model.vo.order.OrderPayVo;
-import com.gec.interest.model.vo.order.OrderProfitsharingVo;
+import com.gec.interest.model.vo.order.*;
 import com.gec.interest.order.service.OrderInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -142,6 +139,12 @@ public class OrderInfoController {
     public Result<Boolean> updateOrderPayStatus(@PathVariable String orderNo) {
         return Result.ok(orderInfoService.updateOrderPayStatus(orderNo));
     }
+    @Operation(summary = "获取订单的系统奖励")
+    @GetMapping("/getOrderRewardFee/{orderNo}")
+    public Result<OrderRewardVo> getOrderRewardFee(@PathVariable String orderNo) {
+        return Result.ok(orderInfoService.getOrderRewardFee(orderNo));
+    }
+
 
 
 
