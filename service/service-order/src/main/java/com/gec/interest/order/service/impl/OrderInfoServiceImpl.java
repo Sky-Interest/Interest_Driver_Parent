@@ -13,10 +13,7 @@ import com.gec.interest.model.form.order.StartDriveForm;
 import com.gec.interest.model.form.order.UpdateOrderBillForm;
 import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.base.PageVo;
-import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
-import com.gec.interest.model.vo.order.OrderBillVo;
-import com.gec.interest.model.vo.order.OrderListVo;
-import com.gec.interest.model.vo.order.OrderProfitsharingVo;
+import com.gec.interest.model.vo.order.*;
 import com.gec.interest.order.mapper.*;
 import com.gec.interest.order.service.OrderInfoService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -369,6 +366,16 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         }
         return true;
     }
+    @Override
+    public OrderPayVo getOrderPayVo(String orderNo, Long customerId) {
+        OrderPayVo orderPayVo = orderInfoMapper.selectOrderPayVo(orderNo, customerId);
+        if(null != orderPayVo) {
+            String content = orderPayVo.getStartLocation() + " 到 " + orderPayVo.getEndLocation();
+            orderPayVo.setContent(content);
+        }
+        return orderPayVo;
+    }
+
 
 
 

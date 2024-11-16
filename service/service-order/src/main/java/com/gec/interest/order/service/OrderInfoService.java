@@ -10,6 +10,7 @@ import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.base.PageVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.model.vo.order.OrderBillVo;
+import com.gec.interest.model.vo.order.OrderPayVo;
 import com.gec.interest.model.vo.order.OrderProfitsharingVo;
 
 public interface OrderInfoService extends IService<OrderInfo> {
@@ -35,4 +36,6 @@ public interface OrderInfoService extends IService<OrderInfo> {
     OrderProfitsharingVo getOrderProfitsharing(Long orderId);
 
     Boolean sendOrderBillInfo(Long orderId, Long driverId);
+
+    OrderPayVo getOrderPayVo(String orderNo, Long customerId);
 }

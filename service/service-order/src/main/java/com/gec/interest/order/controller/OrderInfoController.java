@@ -10,6 +10,7 @@ import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.base.PageVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.model.vo.order.OrderBillVo;
+import com.gec.interest.model.vo.order.OrderPayVo;
 import com.gec.interest.model.vo.order.OrderProfitsharingVo;
 import com.gec.interest.order.service.OrderInfoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -131,6 +132,12 @@ public class OrderInfoController {
     Result<Boolean> sendOrderBillInfo(@PathVariable Long orderId, @PathVariable Long driverId) {
         return Result.ok(orderInfoService.sendOrderBillInfo(orderId, driverId));
     }
+    @Operation(summary = "获取订单支付信息")
+    @GetMapping("/getOrderPayVo/{orderNo}/{customerId}")
+    public Result<OrderPayVo> getOrderPayVo(@PathVariable String orderNo, @PathVariable Long customerId) {
+        return Result.ok(orderInfoService.getOrderPayVo(orderNo, customerId));
+    }
+
 
 
 
