@@ -9,10 +9,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -51,6 +48,12 @@ public class WxPayController {
         result.put("message", "失败");
         return result;
     }
+    @Operation(summary = "支付状态查询")
+    @GetMapping("/queryPayStatus/{orderNo}")
+    public Result queryPayStatus(@PathVariable String orderNo) {
+        return Result.ok(wxPayService.queryPayStatus(orderNo));
+    }
+
 
 
 

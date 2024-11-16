@@ -12,4 +12,6 @@ public interface WxPayService {
     WxPrepayVo createWxPayment(PaymentInfoForm paymentInfoForm);
 
     Map wxnotify(HttpServletRequest request);
+
+    Object queryPayStatus(String orderNo);
 }

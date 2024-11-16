@@ -15,11 +15,12 @@ import com.gec.interest.payment.config.WxPayV3Properties;
 import com.gec.interest.payment.mapper.PaymentInfoMapper;
 import com.gec.interest.payment.service.WxPayService;
 import com.wechat.pay.java.core.RSAAutoCertificateConfig;
+import com.wechat.pay.java.core.exception.ServiceException;
 import com.wechat.pay.java.core.notification.NotificationParser;
 import com.wechat.pay.java.core.notification.RequestParam;
-import com.wechat.pay.java.service.partnerpayments.jsapi.model.Transaction;
 import com.wechat.pay.java.service.payments.jsapi.JsapiServiceExtension;
 import com.wechat.pay.java.service.payments.jsapi.model.*;
+import com.wechat.pay.java.service.payments.model.Transaction;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -157,4 +158,28 @@ public class WxPayServiceImpl implements WxPayService {
         // 后续更新订单状态！ 使用消息队列！
         rabbitService.sendMessage(MqConst.EXCHANGE_ORDER, MqConst.ROUTING_PAY_SUCCESS, paymentInfo.getOrderNo());
     }
+    @Override
+    public Boolean queryPayStatus(String orderNo) {
+        // 构建service
+        JsapiServiceExtension service = new JsapiServiceExtension.Builder().config(rsaAutoCertificateConfig).build();
+
+        QueryOrderByOutTradeNoRequest queryRequest = new QueryOrderByOutTradeNoRequest();
+        queryRequest.setMchid(wxPayV3Properties.getMerchantId());
+        queryRequest.setOutTradeNo(orderNo);
+
+        try {
+            Transaction transaction = service.queryOrderByOutTradeNo(queryRequest);
+            log.info(JSON.toJSONString(transaction));
+            if(null != transaction && transaction.getTradeState() == Transaction.TradeStateEnum.SUCCESS) {
+                //更改订单状态
+                this.handlePayment(transaction);
+                return true;
+            }
+        } catch (ServiceException e) {
+            // API返回失败, 例如ORDER_NOT_EXISTS
+            System.out.printf("code=[%s], message=[%s]\n", e.getErrorCode(), e.getErrorMessage());
+        }
+        return false;
+    }
+
 }

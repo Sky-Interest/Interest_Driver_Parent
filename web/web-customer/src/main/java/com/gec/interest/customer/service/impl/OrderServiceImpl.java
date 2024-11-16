@@ -221,6 +221,11 @@ public class OrderServiceImpl implements OrderService {
         WxPrepayVo wxPrepayVo = wxPayFeignClient.createWxPayment(paymentInfoForm).getData();
         return wxPrepayVo;
     }
+    @Override
+    public Boolean queryPayStatus(String orderNo) {
+        return wxPayFeignClient.queryPayStatus(orderNo).getData();
+    }
+
 
 
 
