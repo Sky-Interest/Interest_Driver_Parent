@@ -21,4 +21,6 @@ public interface DriverInfoService extends IService<DriverInfo> {
     Boolean verifyDriverFace(DriverFaceModelForm driverFaceModelForm);
     Boolean updateServiceStatus(Long driverId, Integer status);
     DriverInfoVo getDriverInfo(Long driverId);
+
+    String getDriverOpenId(Long driverId);
 }
