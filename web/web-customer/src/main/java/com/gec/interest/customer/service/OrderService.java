@@ -3,6 +3,7 @@ package com.gec.interest.customer.service;
 import com.gec.interest.model.form.customer.ExpectOrderForm;
 import com.gec.interest.model.form.customer.SubmitOrderForm;
 import com.gec.interest.model.form.map.CalculateDrivingLineForm;
+import com.gec.interest.model.form.payment.CreateWxPaymentForm;
 import com.gec.interest.model.vo.base.PageVo;
 import com.gec.interest.model.vo.customer.ExpectOrderVo;
 import com.gec.interest.model.vo.driver.DriverInfoVo;
@@ -11,6 +12,7 @@ import com.gec.interest.model.vo.map.OrderLocationVo;
 import com.gec.interest.model.vo.map.OrderServiceLastLocationVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.model.vo.order.OrderInfoVo;
+import com.gec.interest.model.vo.payment.WxPrepayVo;
 
 public interface OrderService {
     ExpectOrderVo expectOrder(ExpectOrderForm expectOrderForm);
@@ -24,4 +26,6 @@ public interface OrderService {
     OrderServiceLastLocationVo getOrderServiceLastLocation(Long orderId);
 
     PageVo findCustomerOrderPage(Long customerId, Long page, Long limit);
+
+    WxPrepayVo createWxPayment(CreateWxPaymentForm createWxPaymentForm);
 }

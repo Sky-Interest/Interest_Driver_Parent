@@ -7,6 +7,7 @@ import com.gec.interest.customer.service.OrderService;
 import com.gec.interest.model.form.customer.ExpectOrderForm;
 import com.gec.interest.model.form.customer.SubmitOrderForm;
 import com.gec.interest.model.form.map.CalculateDrivingLineForm;
+import com.gec.interest.model.form.payment.CreateWxPaymentForm;
 import com.gec.interest.model.vo.base.PageVo;
 import com.gec.interest.model.vo.customer.ExpectOrderVo;
 import com.gec.interest.model.vo.driver.DriverInfoVo;
@@ -15,6 +16,7 @@ import com.gec.interest.model.vo.map.OrderLocationVo;
 import com.gec.interest.model.vo.map.OrderServiceLastLocationVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.model.vo.order.OrderInfoVo;
+import com.gec.interest.model.vo.payment.WxPrepayVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -111,6 +113,15 @@ public class OrderController {
         PageVo pageVo = orderService.findCustomerOrderPage(customerId, page, limit);
         return Result.ok(pageVo);
     }
+    @Operation(summary = "创建微信支付")
+    @InterestLogin
+    @PostMapping("/createWxPayment")
+    public Result<WxPrepayVo> createWxPayment(@RequestBody CreateWxPaymentForm createWxPaymentForm) {
+        Long customerId = AuthContextHolder.getUserId();
+        createWxPaymentForm.setCustomerId(customerId);
+        return Result.ok(orderService.createWxPayment(createWxPaymentForm));
+    }
+
 
 }
 

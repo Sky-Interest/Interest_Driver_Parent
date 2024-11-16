@@ -13,6 +13,8 @@ import com.gec.interest.model.form.customer.ExpectOrderForm;
 import com.gec.interest.model.form.customer.SubmitOrderForm;
 import com.gec.interest.model.form.map.CalculateDrivingLineForm;
 import com.gec.interest.model.form.order.OrderInfoForm;
+import com.gec.interest.model.form.payment.CreateWxPaymentForm;
+import com.gec.interest.model.form.payment.PaymentInfoForm;
 import com.gec.interest.model.form.rules.FeeRuleRequestForm;
 import com.gec.interest.model.vo.base.PageVo;
 import com.gec.interest.model.vo.customer.ExpectOrderVo;
@@ -24,6 +26,8 @@ import com.gec.interest.model.vo.map.OrderServiceLastLocationVo;
 import com.gec.interest.model.vo.order.CurrentOrderInfoVo;
 import com.gec.interest.model.vo.order.OrderBillVo;
 import com.gec.interest.model.vo.order.OrderInfoVo;
+import com.gec.interest.model.vo.order.OrderPayVo;
+import com.gec.interest.model.vo.payment.WxPrepayVo;
 import com.gec.interest.model.vo.rules.FeeRuleResponseVo;
 import com.gec.interest.order.client.OrderInfoFeignClient;
 import com.gec.interest.rules.client.FeeRuleFeignClient;
@@ -31,6 +35,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.gec.interest.customer.client.CustomerInfoFeignClient;
+import com.gec.interest.map.client.WxPayFeignClient;
 
 import java.util.Date;
 
@@ -55,6 +61,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private LocationFeignClient locationFeignClient;
+
+    @Autowired
+    private CustomerInfoFeignClient customerInfoFeignClient;
+
+    @Autowired
+    private WxPayFeignClient wxPayFeignClient;
 
 
     @Override
@@ -182,6 +194,32 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public PageVo findCustomerOrderPage(Long customerId, Long page, Long limit) {
         return orderInfoFeignClient.findCustomerOrderPage(customerId, page, limit).getData();
+    }
+    @Override
+    public WxPrepayVo createWxPayment(CreateWxPaymentForm createWxPaymentForm) {
+        //1.获取订单支付相关信息
+        OrderPayVo orderPayVo = orderInfoFeignClient.getOrderPayVo(createWxPaymentForm.getOrderNo(), createWxPaymentForm.getCustomerId()).getData();
+        //判断是否在未支付状态
+        if (orderPayVo.getStatus().intValue() != OrderStatus.UNPAID.getStatus().intValue()) {
+            throw new interestException(ResultCodeEnum.ILLEGAL_REQUEST);
+        }
+
+        //2.获取乘客微信openId
+        String customerOpenId = customerInfoFeignClient.getCustomerOpenId(orderPayVo.getCustomerId()).getData();
+
+        //3.获取司机微信openId
+        String driverOpenId = driverInfoFeignClient.getDriverOpenId(orderPayVo.getDriverId()).getData();
+
+        //4.封装微信下单对象，微信支付只关注以下订单属性
+        PaymentInfoForm paymentInfoForm = new PaymentInfoForm();
+        paymentInfoForm.setCustomerOpenId(customerOpenId);
+        paymentInfoForm.setDriverOpenId(driverOpenId);
+        paymentInfoForm.setOrderNo(orderPayVo.getOrderNo());
+        paymentInfoForm.setAmount(orderPayVo.getPayAmount());
+        paymentInfoForm.setContent(orderPayVo.getContent());
+        paymentInfoForm.setPayWay(1);
+        WxPrepayVo wxPrepayVo = wxPayFeignClient.createWxPayment(paymentInfoForm).getData();
+        return wxPrepayVo;
     }
 
 

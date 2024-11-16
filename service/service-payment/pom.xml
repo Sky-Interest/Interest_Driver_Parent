@@ -19,6 +19,12 @@
             <artifactId>service-util</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.wechatpay-apiv3</groupId>
+            <artifactId>wechatpay-java</artifactId>
+            <version>0.2.14</version>
+        </dependency>
+
     </dependencies>
 
     <build>
