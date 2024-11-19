@@ -29,8 +29,24 @@
             <artifactId>rabbit-util</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-seata</artifactId>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>io.seata</groupId>-->
+<!--            <artifactId>seata-spring-boot-starter</artifactId>-->
+<!--            <version>1.7.1</version>-->
+<!--        </dependency>-->
 
 
+        <!--If your project base on `Spring Boot`, you can directly use the following dependencies-->
+        <!--Notice: `seata-spring-boot-starter` has already included `seata-all` dependency-->
+        <dependency>
+            <groupId>org.apache.seata</groupId>
+            <artifactId>seata-spring-boot-starter</artifactId>
+            <version>2.2.0</version>
+        </dependency>
     </dependencies>
 
     <build>
