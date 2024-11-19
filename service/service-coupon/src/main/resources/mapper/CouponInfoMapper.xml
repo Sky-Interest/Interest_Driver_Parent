@@ -117,5 +117,29 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	<update id="updateUseCount">
 		update coupon_info set use_count = use_count + 1 where id = #{id}
 	</update>
+	<select id="findNoReceivePage" resultType="com.gec.driver.model.vo.coupon.NoReceiveCouponVo">
+		select
+			info.id,
+			info.coupon_type,
+			info.name,
+			info.amount,
+			info.discount,
+			info.condition_amount,
+			info.publish_count,
+			info.per_limit,
+			info.expire_time,
+			info.description
+		from coupon_info info
+				 left join (
+			select coupon_id, customer_id, count(customer_id) cnt  from customer_coupon where customer_id = #{customerId}  group by coupon_id, customer_id
+		) cus_coup on cus_coup.coupon_id = info.id
+		where
+			info.status = 1
+		  and info.receive_count &lt; info.publish_count
+		  and (
+			info.per_limit =0 or info.per_limit > cus_coup.cnt or cus_coup.cnt is null
+			)
+		order by info.id desc
+	</select>
 </mapper>
 
