@@ -6,6 +6,7 @@ import com.gec.interest.common.util.AuthContextHolder;
 import com.gec.interest.customer.service.CouponService;
 import com.gec.interest.model.vo.base.PageVo;
 import com.gec.interest.model.vo.coupon.NoReceiveCouponVo;
+import com.gec.interest.model.vo.coupon.NoUseCouponVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,6 +38,20 @@ public class CouponController {
         PageVo<NoReceiveCouponVo> pageVo = couponService.findNoReceivePage(customerId, page, limit);
         return Result.ok(pageVo);
     }
+    @Operation(summary = "查询未使用优惠券分页列表")
+    @InterestLogin
+    @GetMapping("findNoUsePage/{page}/{limit}")
+    public Result<PageVo<NoUseCouponVo>> findNoUsePage(
+            @Parameter(name = "page", description = "当前页码", required = true)
+            @PathVariable Long page,
+
+            @Parameter(name = "limit", description = "每页记录数", required = true)
+            @PathVariable Long limit) {
+        Long customerId = AuthContextHolder.getUserId();
+        PageVo<NoUseCouponVo> pageVo = couponService.findNoUsePage(customerId, page, limit);
+        return Result.ok(pageVo);
+    }
+
 
 }
 

@@ -141,5 +141,28 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			)
 		order by info.id desc
 	</select>
+	<select id="findNoUsePage" resultType="com.gec.driver.model.vo.coupon.NoUseCouponVo">
+		select
+			info.id,
+			info.coupon_type,
+			info.name,
+			info.amount,
+			info.discount,
+			info.condition_amount,
+			info.publish_count,
+			info.per_limit,
+			info.expire_time,
+			info.description,
+
+			cstr.receive_time
+		from coupon_info info
+				 inner join customer_coupon cstr on cstr.coupon_id = info.id
+		where
+			cstr.customer_id = #{customerId}
+		  and cstr.status = 1
+		  and cstr.expire_time > now()
+		order by cstr.id desc
+	</select>
+
 </mapper>
 
