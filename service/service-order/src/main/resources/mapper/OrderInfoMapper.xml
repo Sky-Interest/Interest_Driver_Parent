@@ -5,7 +5,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 
 
 <mapper namespace="com.gec.interest.order.mapper.OrderInfoMapper">
-    <select id="selectCustomerOrderPage" resultType="com.gec.driver.model.vo.order.OrderListVo">
+    <select id="selectCustomerOrderPage" resultType="com.gec.interest.model.vo.order.OrderListVo">
         select
             info.id,
             info.order_no,
@@ -20,7 +20,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
           and info.is_deleted = 0
         order by info.create_time desc
     </select>
-    <select id="selectDriverOrderPage" resultType="com.gec.driver.model.vo.order.OrderListVo">
+    <select id="selectDriverOrderPage" resultType="com.gec.interest.model.vo.order.OrderListVo">
         select
             id,
             order_no,

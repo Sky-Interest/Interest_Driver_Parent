@@ -41,4 +41,6 @@ public interface OrderInfoService extends IService<OrderInfo> {
     OrderRewardVo getOrderRewardFee(String orderNo);
 
     void updateProfitsharingStatus(String orderNo);
+
+    void orderCancel(long orderId);
 }
