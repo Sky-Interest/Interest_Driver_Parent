@@ -4,6 +4,7 @@ import com.gec.interest.common.result.Result;
 import com.gec.interest.model.vo.base.PageVo;
 import com.gec.interest.model.vo.coupon.NoReceiveCouponVo;
 import com.gec.interest.model.vo.coupon.NoUseCouponVo;
+import com.gec.interest.model.vo.coupon.UsedCouponVo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +36,19 @@ public interface CouponFeignClient {
             @PathVariable("customerId") Long customerId,
             @PathVariable("page") Long page,
             @PathVariable("limit") Long limit);
+    /**
+     * 查询已使用优惠券分页列表
+     * @param customerId
+     * @param page
+     * @param limit
+     * @return
+     */
+    @GetMapping("/coupon/info/findUsedPage/{customerId}/{page}/{limit}")
+    Result<PageVo<UsedCouponVo>> findUsedPage(
+            @PathVariable("customerId") Long customerId,
+            @PathVariable("page") Long page,
+            @PathVariable("limit") Long limit);
+
 
 
 }

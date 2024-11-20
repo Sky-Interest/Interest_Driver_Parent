@@ -117,7 +117,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	<update id="updateUseCount">
 		update coupon_info set use_count = use_count + 1 where id = #{id}
 	</update>
-	<select id="findNoReceivePage" resultType="com.gec.driver.model.vo.coupon.NoReceiveCouponVo">
+	<select id="findNoReceivePage" resultType="com.gec.interest.model.vo.coupon.NoReceiveCouponVo">
 		select
 			info.id,
 			info.coupon_type,
@@ -141,7 +141,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 			)
 		order by info.id desc
 	</select>
-	<select id="findNoUsePage" resultType="com.gec.driver.model.vo.coupon.NoUseCouponVo">
+	<select id="findNoUsePage" resultType="com.gec.interest.model.vo.coupon.NoUseCouponVo">
 		select
 			info.id,
 			info.coupon_type,
@@ -163,6 +163,29 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		  and cstr.expire_time > now()
 		order by cstr.id desc
 	</select>
+	<select id="findUsedPage" resultType="com.gec.interest.model.vo.coupon.UsedCouponVo">
+		select
+			info.id,
+			info.coupon_type,
+			info.name,
+			info.amount,
+			info.discount,
+			info.condition_amount,
+			info.publish_count,
+			info.per_limit,
+			info.expire_time,
+			info.description,
+
+			cstr.id as customerCouponId,
+			cstr.used_time
+		from coupon_info info
+				 inner join customer_coupon cstr on cstr.coupon_id = info.id
+		where
+			cstr.customer_id = #{customerId}
+		  and cstr.status = 2
+		order by cstr.id desc
+	</select>
+
 
 </mapper>
 
