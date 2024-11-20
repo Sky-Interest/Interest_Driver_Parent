@@ -185,6 +185,10 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 		  and cstr.status = 2
 		order by cstr.id desc
 	</select>
+	<update id="updateReceiveCount">
+		update coupon_info set receive_count = receive_count + 1 where id = #{id}
+	</update>
+
 
 
 </mapper>
