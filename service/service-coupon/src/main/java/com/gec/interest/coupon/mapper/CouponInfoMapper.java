@@ -10,6 +10,8 @@ import com.gec.interest.model.vo.coupon.UsedCouponVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 @Mapper
 public interface CouponInfoMapper extends BaseMapper<CouponInfo> {
 
@@ -22,5 +24,7 @@ public interface CouponInfoMapper extends BaseMapper<CouponInfo> {
     int updateReceiveCount(@Param("id") Long id);
     int updateReceiveCountByLimit(@Param("id") Long id);
 
+
+    List<NoUseCouponVo> findNoUseList(@Param("customerId") Long customerId);
 
 }

@@ -1,5 +1,6 @@
 package com.gec.interest.coupon.service.impl;
 
+import com.alibaba.nacos.client.naming.utils.CollectionUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -13,17 +14,25 @@ import com.gec.interest.model.entity.coupon.CouponInfo;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gec.interest.model.entity.coupon.CustomerCoupon;
 import com.gec.interest.model.vo.base.PageVo;
+import com.gec.interest.model.vo.coupon.AvailableCouponVo;
 import com.gec.interest.model.vo.coupon.NoReceiveCouponVo;
 import com.gec.interest.model.vo.coupon.NoUseCouponVo;
 import com.gec.interest.model.vo.coupon.UsedCouponVo;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -119,7 +128,61 @@ public class CouponInfoServiceImpl extends ServiceImpl<CouponInfoMapper, CouponI
         customerCoupon.setExpireTime(expireTime);
         customerCouponMapper.insert(customerCoupon);
     }
+    @Override
+    public List<AvailableCouponVo> findAvailableCoupon(Long customerId, BigDecimal orderAmount) {
+        //1、可使用的优惠卷集合定义
+        List<AvailableCouponVo> availableCouponVoList = new ArrayList<>();
+        //2、获取未使用的优惠卷列表
+        List<NoUseCouponVo> list = couponInfoMapper.findNoUseList(customerId);
+        //3、现金-列表
+        List<NoUseCouponVo> type1List = list.stream().filter(item -> item.getCouponType().intValue() == 1).collect(Collectors.toList());
+        //逻辑判断、计算优惠价格[存放list中]
+        for (NoUseCouponVo noUseCouponVo : type1List) {
+            //获取优惠卷减免金额【现金卷】
+            BigDecimal reduceAmount = noUseCouponVo.getAmount();
+            //1、没门槛  订单金额要大于优惠卷的优惠的金额
+            if (noUseCouponVo.getConditionAmount().doubleValue() == 0 && orderAmount.subtract(reduceAmount).doubleValue() >= 0) {
+                availableCouponVoList.add(this.buildBestNoUseCouponVo(noUseCouponVo, reduceAmount));
+            }
+            //2、有门槛  大于门槛金额
+            if (noUseCouponVo.getConditionAmount().doubleValue() > 0 && orderAmount.subtract(noUseCouponVo.getConditionAmount()).doubleValue() >= 0) {
+                availableCouponVoList.add(this.buildBestNoUseCouponVo(noUseCouponVo, reduceAmount));
+            }
+        }
+        //4、折扣-列表
+        List<NoUseCouponVo> type2List = list.stream().filter(item -> item.getCouponType().intValue() == 2).collect(Collectors.toList());
+        //逻辑判断、计算优惠价格[存放list中]
+        for (NoUseCouponVo noUseCouponVo : type2List) {
+            //获取优惠卷减免金额【折扣卷】[设置2位数的进度处理]
+            BigDecimal reduceAmount = orderAmount
+                    .multiply(noUseCouponVo.getDiscount())
+                    .divide(new BigDecimal("10"))
+                    .setScale(2, RoundingMode.HALF_UP);
+            //1、没门槛  订单金额要大于优惠卷的优惠的金额
+            if (noUseCouponVo.getConditionAmount().doubleValue() == 0) {
+                availableCouponVoList.add(this.buildBestNoUseCouponVo(noUseCouponVo, reduceAmount));
+            }
+            //2、有门槛  大于门槛金额
+            if (noUseCouponVo.getConditionAmount().doubleValue() > 0 && orderAmount.subtract(noUseCouponVo.getConditionAmount()).doubleValue() >= 0) {
+                availableCouponVoList.add(this.buildBestNoUseCouponVo(noUseCouponVo, reduceAmount));
+            }
+        }
+        //5、排序操作
+        if (!CollectionUtils.isEmpty(availableCouponVoList)) {
+            Collections.sort(availableCouponVoList, (o1, o2) -> o1.getReduceAmount().compareTo(o2.getReduceAmount()));
+        }
+        //返回
+        return availableCouponVoList;
+    }
 
+    private AvailableCouponVo buildBestNoUseCouponVo(NoUseCouponVo noUseCouponVo, BigDecimal reduceAmount) {
+        AvailableCouponVo bestNoUseCouponVo = new AvailableCouponVo();
+        BeanUtils.copyProperties(noUseCouponVo, bestNoUseCouponVo);
+        bestNoUseCouponVo.setCouponId(noUseCouponVo.getId());
+        bestNoUseCouponVo.setReduceAmount(reduceAmount);
+        return bestNoUseCouponVo;
+
+    }
 
 
 }

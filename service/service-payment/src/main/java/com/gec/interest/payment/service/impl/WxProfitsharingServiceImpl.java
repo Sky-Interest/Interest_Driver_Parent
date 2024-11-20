@@ -110,7 +110,7 @@ public class WxProfitsharingServiceImpl implements WxProfitsharingService {
             rabbitService.sendMessage(MqConst.EXCHANGE_ORDER, MqConst.ROUTING_PROFITSHARING_SUCCESS, paymentInfo.getOrderNo());
         } else if (ordersEntity.getState().name().equals("PROCESSING")) {//PROCESSING：处理中
             //通过延迟队列发送一个延迟消息、然后监听者在一段时间之后再消费信息去进行分账
-            rabbitService.sendDealyMessage(
+            rabbitService.sendDelayMessage(
                     MqConst.EXCHANGE_PROFITSHARING,
                     MqConst.ROUTING_PROFITSHARING,
                     JSONObject.toJSONString(profitsharingForm),
