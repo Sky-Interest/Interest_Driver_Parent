@@ -13,6 +13,7 @@ import com.gec.interest.coupon.service.CouponInfoService;
 import com.gec.interest.model.entity.coupon.CouponInfo;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gec.interest.model.entity.coupon.CustomerCoupon;
+import com.gec.interest.model.form.coupon.UseCouponForm;
 import com.gec.interest.model.vo.base.PageVo;
 import com.gec.interest.model.vo.coupon.AvailableCouponVo;
 import com.gec.interest.model.vo.coupon.NoReceiveCouponVo;
@@ -181,7 +182,51 @@ public class CouponInfoServiceImpl extends ServiceImpl<CouponInfoMapper, CouponI
         bestNoUseCouponVo.setCouponId(noUseCouponVo.getId());
         bestNoUseCouponVo.setReduceAmount(reduceAmount);
         return bestNoUseCouponVo;
-
+    }
+    @Override
+    @Transactional(noRollbackFor = Exception.class)
+    public BigDecimal useCoupon(UseCouponForm useCouponForm) {
+        //1、获取使用的优惠卷信息
+        CustomerCoupon customerCoupon = customerCouponMapper.selectById(useCouponForm.getCustomerCouponId());
+        if (customerCoupon == null) {
+            throw new interestException(ResultCodeEnum.ARGUMENT_VALID_ERROR);
+        }
+        //2、判断优惠卷是否该乘客拥有
+        CouponInfo couponInfo = couponInfoMapper.selectById(customerCoupon.getCouponId());
+        if (couponInfo == null) {
+            throw new interestException(ResultCodeEnum.ARGUMENT_VALID_ERROR);
+        }
+        if (customerCoupon.getCustomerId().intValue() != useCouponForm.getCustomerId().intValue()) {
+            throw new interestException(ResultCodeEnum.ILLEGAL_REQUEST);
+        }
+        //3、获取优惠金额
+        BigDecimal reduceAmount = null;
+        if (couponInfo.getCouponType().intValue() == 1) {//现金卷
+            reduceAmount = couponInfo.getAmount();
+        } else {//现金卷折扣卷
+            //获取优惠卷减免金额【折扣卷】[设置2位数的进度处理]
+            reduceAmount = useCouponForm.getOrderAmount()
+                    .multiply(couponInfo.getDiscount())
+                    .divide(new BigDecimal("10"))
+                    .setScale(2, RoundingMode.HALF_UP);
+        }
+        //4、合理化判断优惠金额是否大于0、更新使用信息
+        if (reduceAmount.doubleValue() > 0) {
+            //更新当前使用的优惠卷的【已使用数量】
+            int update = couponInfoMapper.updateUseCount(couponInfo.getId());
+            //更新customer_coupon-优化券状态（1：未使用 2：已使用）使用时间
+            if (update > 0) {
+                CustomerCoupon updateCustomerCoupon = new CustomerCoupon();
+                updateCustomerCoupon.setId(customerCoupon.getId());
+                updateCustomerCoupon.setUsedTime(new Date());
+                updateCustomerCoupon.setOrderId(useCouponForm.getOrderId());
+                //更新操作
+                customerCouponMapper.updateById(updateCustomerCoupon);
+                //返回
+                return reduceAmount;
+            }
+        }
+        throw new interestException(ResultCodeEnum.DATA_ERROR);
     }
 
 
