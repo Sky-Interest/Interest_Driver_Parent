@@ -35,7 +35,7 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
           and is_deleted = 0
         order by create_time desc
     </select>
-    <select id="selectOrderPayVo" resultType="com.gec.driver.model.vo.order.OrderPayVo">
+    <select id="selectOrderPayVo" resultType="com.gec.interest.model.vo.order.OrderPayVo">
         select
             info.id as order_id,
             info.customer_id,

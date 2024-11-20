@@ -10,6 +10,8 @@ import com.gec.interest.model.form.order.UpdateOrderCartForm;
 import com.gec.interest.model.vo.base.PageVo;
 import com.gec.interest.model.vo.order.*;
 
+import java.math.BigDecimal;
+
 public interface OrderInfoService extends IService<OrderInfo> {
     Long saveOrderInfo(OrderInfoForm orderInfoForm);
     Integer getOrderStatus(Long orderId);
@@ -43,4 +45,6 @@ public interface OrderInfoService extends IService<OrderInfo> {
     void updateProfitsharingStatus(String orderNo);
 
     void orderCancel(long orderId);
+
+    Boolean updateCouponAmount(Long orderId, BigDecimal couponAmount);
 }
