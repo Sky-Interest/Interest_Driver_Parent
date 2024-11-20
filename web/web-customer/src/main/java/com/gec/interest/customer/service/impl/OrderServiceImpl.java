@@ -2,6 +2,7 @@ package com.gec.interest.customer.service.impl;
 
 import com.gec.interest.common.execption.interestException;
 import com.gec.interest.common.result.ResultCodeEnum;
+import com.gec.interest.coupon.client.CouponFeignClient;
 import com.gec.interest.customer.service.OrderService;
 import com.gec.interest.dispatch.client.NewOrderFeignClient;
 import com.gec.interest.driver.client.DriverInfoFeignClient;
@@ -9,6 +10,7 @@ import com.gec.interest.map.client.LocationFeignClient;
 import com.gec.interest.map.client.MapFeignClient;
 import com.gec.interest.model.entity.order.OrderInfo;
 import com.gec.interest.model.enums.OrderStatus;
+import com.gec.interest.model.form.coupon.UseCouponForm;
 import com.gec.interest.model.form.customer.ExpectOrderForm;
 import com.gec.interest.model.form.customer.SubmitOrderForm;
 import com.gec.interest.model.form.map.CalculateDrivingLineForm;
@@ -38,6 +40,7 @@ import org.springframework.stereotype.Service;
 import com.gec.interest.customer.client.CustomerInfoFeignClient;
 import com.gec.interest.map.client.WxPayFeignClient;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Slf4j
@@ -67,6 +70,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private WxPayFeignClient wxPayFeignClient;
+    @Autowired
+    private CouponFeignClient couponFeignClient;
 
 
     @Override
@@ -210,12 +215,36 @@ public class OrderServiceImpl implements OrderService {
         //3.获取司机微信openId
         String driverOpenId = driverInfoFeignClient.getDriverOpenId(orderPayVo.getDriverId()).getData();
 
-        //4.封装微信下单对象，微信支付只关注以下订单属性
+        //4.处理优惠券
+        BigDecimal couponAmount = null;
+        //支付时选择过一次优惠券，如果支付失败或未支付，下次支付时不能再次选择，只能使用第一次选中的优惠券（前端已控制，后端再次校验）
+        if (null == orderPayVo.getCouponAmount() && null != createWxPaymentForm.getCustomerCouponId() && createWxPaymentForm.getCustomerCouponId() != 0) {
+            UseCouponForm useCouponForm = new UseCouponForm();
+            useCouponForm.setOrderId(orderPayVo.getOrderId());
+            useCouponForm.setCustomerCouponId(createWxPaymentForm.getCustomerCouponId());
+            useCouponForm.setOrderAmount(orderPayVo.getPayAmount());
+            useCouponForm.setCustomerId(createWxPaymentForm.getCustomerId());
+            couponAmount = couponFeignClient.useCoupon(useCouponForm).getData();
+        }
+
+        //5.更新账单优惠券金额
+        //支付金额
+        BigDecimal payAmount = orderPayVo.getPayAmount();
+        if (null != couponAmount) {
+            Boolean isUpdate = orderInfoFeignClient.updateCouponAmount(orderPayVo.getOrderId(), couponAmount).getData();
+            if (!isUpdate) {
+                throw new interestException(ResultCodeEnum.DATA_ERROR);
+            }
+            //当前支付金额 = 支付金额 - 优惠券金额
+            payAmount = payAmount.subtract(couponAmount);
+        }
+
+        //6.封装微信下单对象，微信支付只关注以下订单属性
         PaymentInfoForm paymentInfoForm = new PaymentInfoForm();
         paymentInfoForm.setCustomerOpenId(customerOpenId);
         paymentInfoForm.setDriverOpenId(driverOpenId);
         paymentInfoForm.setOrderNo(orderPayVo.getOrderNo());
-        paymentInfoForm.setAmount(orderPayVo.getPayAmount());
+        paymentInfoForm.setAmount(payAmount);
         paymentInfoForm.setContent(orderPayVo.getContent());
         paymentInfoForm.setPayWay(1);
         WxPrepayVo wxPrepayVo = wxPayFeignClient.createWxPayment(paymentInfoForm).getData();
@@ -225,8 +254,5 @@ public class OrderServiceImpl implements OrderService {
     public Boolean queryPayStatus(String orderNo) {
         return wxPayFeignClient.queryPayStatus(orderNo).getData();
     }
-
-
-
 
 }
