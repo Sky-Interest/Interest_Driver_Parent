@@ -20,5 +20,7 @@ public interface CouponInfoMapper extends BaseMapper<CouponInfo> {
     IPage<UsedCouponVo> findUsedPage(Page<CouponInfo> pageParam, @Param("customerId") Long customerId);
 
     int updateReceiveCount(@Param("id") Long id);
+    int updateReceiveCountByLimit(@Param("id") Long id);
+
 
 }

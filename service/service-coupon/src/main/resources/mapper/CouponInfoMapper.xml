@@ -188,6 +188,10 @@ PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
 	<update id="updateReceiveCount">
 		update coupon_info set receive_count = receive_count + 1 where id = #{id}
 	</update>
+	<update id="updateReceiveCountByLimit">
+		update coupon_info set receive_count = receive_count + 1 where id = #{id} and receive_count &lt; publish_count
+	</update>
+
 
 
 
